@@ -1,0 +1,126 @@
+//
+//  InjectionTarget.swift
+//  TrollFools
+//
+//  Created by Operit on 2025/10/16.
+//
+
+import Foundation
+
+/// Which Mach-O a plug-in should be attached to.
+///
+/// The model mirrors the injection-target selection found in LCSign: a plug-in
+/// may be pinned to the app's main executable, a concrete framework inside
+/// `Frameworks/`, or an app extension inside `PlugIns/`.
+enum InjectionTarget: Hashable {
+    /// The main executable of the app bundle (「主程序」).
+    case mainExecutable
+
+    /// A concrete Mach-O inside `Frameworks/`.
+    /// - Parameter name: bundle or file name, e.g. `ProtobufLite.framework` or `Foo.dylib`.
+    case framework(String)
+
+    /// A plug-in extension inside `PlugIns/`.
+    /// - Parameter name: bundle name, e.g. `MyWidget.appex`.
+    case appExtension(String)
+}
+
+// MARK: - Codable
+
+extension InjectionTarget: Codable {
+    private enum CodingKeys: String, CodingKey {
+        case kind
+        case name
+    }
+
+    private enum Kind: String {
+        case mainExecutable
+        case framework
+        case appExtension
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        let kind = try container.decode(String.self, forKey: .kind)
+        switch kind {
+        case Kind.framework.rawValue:
+            self = .framework(try container.decode(String.self, forKey: .name))
+        case Kind.appExtension.rawValue:
+            self = .appExtension(try container.decode(String.self, forKey: .name))
+        default:
+            // `mainExecutable`, plus any unknown/retired kind, all resolve to
+            // the main executable, so old records keep their behaviour.
+            self = .mainExecutable
+        }
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        switch self {
+        case .mainExecutable:
+            try container.encode(Kind.mainExecutable.rawValue, forKey: .kind)
+        case let .framework(name):
+            try container.encode(Kind.framework.rawValue, forKey: .kind)
+            try container.encode(name, forKey: .name)
+        case let .appExtension(name):
+            try container.encode(Kind.appExtension.rawValue, forKey: .kind)
+            try container.encode(name, forKey: .name)
+        }
+    }
+}
+
+// MARK: - Presentation
+
+extension InjectionTarget: Identifiable {
+    var id: String {
+        switch self {
+        case .mainExecutable: return "main"
+        case let .framework(name): return "framework:\(name)"
+        case let .appExtension(name): return "appExtension:\(name)"
+        }
+    }
+
+    /// Full, human readable name shown in the picker.
+    ///
+    /// Frameworks and extensions are displayed by their base name only, e.g.
+    /// `Foo.framework` → `Foo` and `Bar.appex` → `Bar`. The bundle extension is
+    /// intentionally hidden because the surrounding section already tells the
+    /// user what kind of target it is.
+    var localizedTitle: String {
+        switch self {
+        case .mainExecutable:
+            return NSLocalizedString("Main Executable", comment: "Injection target")
+        case let .framework(name):
+            return Self.displayName(of: name)
+        case let .appExtension(name):
+            return Self.displayName(of: name)
+        }
+    }
+
+    /// Strips the trailing bundle extension for display purposes only.
+    /// `Foo.framework` → `Foo`, `Bar.appex` → `Bar`, `Baz.dylib` → `Baz`.
+    static func displayName(of name: String) -> String {
+        let base = (name as NSString).deletingPathExtension
+        return base.isEmpty ? name : base
+    }
+
+    /// Compact name used by the plug-in list badge.
+    var shortTitle: String {
+        switch self {
+        case .mainExecutable:
+            return NSLocalizedString("Main", comment: "Injection target")
+        case .framework:
+            return NSLocalizedString("Framework", comment: "Injection target")
+        case .appExtension:
+            return NSLocalizedString("Extension", comment: "Injection target")
+        }
+    }
+
+    var systemImageName: String {
+        switch self {
+        case .mainExecutable: return "app.dashed"
+        case .framework: return "shippingbox"
+        case .appExtension: return "puzzlepiece.extension"
+        }
+    }
+}
