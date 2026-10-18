@@ -6,6 +6,10 @@ on:
     branches:
       - release
 
+# 创建 Release / 上传附件需要写权限（新仓库默认只读，必须显式声明）
+permissions:
+  contents: write
+
 env:
   THEOS: ""
   VERSION: "0.0.0-0"
@@ -80,3 +84,4 @@ jobs:
           prerelease: false
           files: |
             *.tipa
+            *.deb
