@@ -1,5 +1,20 @@
 # Changelog
 
+## 4.4.2 Build 262 (2026-10-22)
+
+### 修复
+- 插件列表的注入目标列表改为后台异步扫描并缓存，避免在 SwiftUI `body` 里反复解析 Mach-O，修复主线程卡死与被 watchdog 终止（`0x8badf00d`）。
+- 注入 / 卸载 / 切换注入目标的耗时操作统一移到后台队列（`runInBackground`）执行，完成后自动刷新列表，界面不再假死。
+
+------
+## 4.4.2 Build 262 (2026-10-22) [EN]
+
+### Fixed
+- Injection-target scanning now runs asynchronously on a background queue and is cached, no more Mach-O re-parsing inside SwiftUI `body` (which froze the main thread and triggered a watchdog termination, `0x8badf00d`).
+- Inject / eject / retarget work is executed off the main thread via `runInBackground`, and the list refreshes when it finishes.
+
+------
+
 ## 4.3 Build 253 (2026-04-23)
 
 修复与 MachOKit 有关的一处断言崩溃。

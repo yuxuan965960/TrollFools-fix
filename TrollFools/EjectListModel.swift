@@ -34,6 +34,16 @@ final class EjectListModel: ObservableObject {
     /// A pending target change to be applied by the view.
     @Published var retargetRequest: RetargetRequest?
 
+    /// Cached injection hosts of this app.
+    ///
+    /// Scanning `Frameworks/` and `PlugIns/` parses every Mach-O, which is far
+    /// too expensive to repeat from a SwiftUI `body` (it used to hang the main
+    /// thread and got the app killed by the watchdog). The list is therefore
+    /// built once per reload on a background queue.
+    @Published private(set) var injectionTargets: [InjectorV3.TargetCandidate]?
+
+    private var isLoadingInjectionTargets = false
+
     private var cancellables = Set<AnyCancellable>()
 
     init(_ app: App) {
@@ -77,6 +87,42 @@ final class EjectListModel: ObservableObject {
             .sorted { $0.url.lastPathComponent.localizedStandardCompare($1.url.lastPathComponent) == .orderedAscending }
 
         performFilter()
+
+        refreshInjectionTargets()
+    }
+
+    /// Rebuilds the cached injection-target list off the main thread.
+    ///
+    /// Every call re-parses the app's Mach-Os, so it must never run from a
+    /// SwiftUI `body` evaluation: doing that repeatedly saturated the main
+    /// thread and ended in a `0x8badf00d` watchdog termination.
+    func refreshInjectionTargets() {
+        guard !isLoadingInjectionTargets else {
+            return
+        }
+        isLoadingInjectionTargets = true
+
+        // A fresh list is required after any injection-state change.
+        injectionTargets = nil
+
+        let appURL = app.url
+
+        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
+            let targets: [InjectorV3.TargetCandidate]
+            if let injector = try? InjectorV3(appURL) {
+                targets = injector.availableInjectionTargets()
+            } else {
+                targets = []
+            }
+
+            DispatchQueue.main.async {
+                guard let self = self else {
+                    return
+                }
+                self.injectionTargets = targets
+                self.isLoadingInjectionTargets = false
+            }
+        }
     }
 
     func performFilter() {
@@ -103,7 +149,16 @@ final class EjectListModel: ObservableObject {
     // MARK: - Injection Targets
 
     /// All hosts a plug-in of this app can be pinned to.
+    ///
+    /// Returns the cached list whenever it is available, so the picker sheet
+    /// never re-scans the bundle while SwiftUI evaluates `body`. The synchronous
+    /// scan only happens when the cache is not ready yet (e.g. the user taps a
+    /// cell immediately after the list appears).
     func availableInjectionTargets() -> [InjectorV3.TargetCandidate] {
+        if let injectionTargets = injectionTargets {
+            return injectionTargets
+        }
+
         guard let injector = try? InjectorV3(app.url) else {
             return []
         }

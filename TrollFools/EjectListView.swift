@@ -394,16 +394,15 @@ struct EjectListView: View {
             injector.useFrameworkEnumerationFallback = useFrameworkEnumerationFallback
             injector.injectStrategy = injectStrategy
 
-            if !enabledURLsToRemove.isEmpty {
-                try injector.eject(enabledURLsToRemove, shouldDesist: true)
-            }
+            runInBackground(logFileURL: logFileURL) {
+                if !enabledURLsToRemove.isEmpty {
+                    try injector.eject(enabledURLsToRemove, shouldDesist: true)
+                }
 
-            if !disabledURLsToRemove.isEmpty {
-                injector.desist(disabledURLsToRemove)
+                if !disabledURLsToRemove.isEmpty {
+                    injector.desist(disabledURLsToRemove)
+                }
             }
-
-            ejectList.app.reload()
-            ejectList.reload()
         } catch {
             DDLogError("\(error)", ddlog: InjectorV3.main.logger)
 
@@ -445,14 +444,13 @@ struct EjectListView: View {
             injector.injectStrategy = injectStrategy
             injector.pinnedInjectionTarget = plugIn.injectionTarget
 
-            if plugIn.isEnabled {
-                try injector.eject(plugInURLsToProcess, shouldDesist: false)
-            } else {
-                try injector.inject(plugInURLsToProcess, shouldPersist: false)
+            runInBackground(logFileURL: logFileURL) {
+                if plugIn.isEnabled {
+                    try injector.eject(plugInURLsToProcess, shouldDesist: false)
+                } else {
+                    try injector.inject(plugInURLsToProcess, shouldPersist: false)
+                }
             }
-
-            ejectList.app.reload()
-            ejectList.reload()
         } catch {
             DDLogError("\(error)", ddlog: InjectorV3.main.logger)
 
@@ -480,25 +478,24 @@ struct EjectListView: View {
             let injector = try makeInjector(pinnedTarget: request.newTarget)
             logFileURL = injector.latestLogFileURL
 
-            if plugIn.isEnabled {
-                // `eject` deletes the asset from the bundle, so stage a copy
-                // first and re-inject from that copy afterwards.
-                let stagingDir = InjectorV3.temporaryRoot
-                    .appendingPathComponent("Retarget_\(UUID().uuidString)", isDirectory: true)
-                try FileManager.default.createDirectory(at: stagingDir, withIntermediateDirectories: true)
+            runInBackground(logFileURL: logFileURL) {
+                if plugIn.isEnabled {
+                    // `eject` deletes the asset from the bundle, so stage a copy
+                    // first and re-inject from that copy afterwards.
+                    let stagingDir = InjectorV3.temporaryRoot
+                        .appendingPathComponent("Retarget_\(UUID().uuidString)", isDirectory: true)
+                    try FileManager.default.createDirectory(at: stagingDir, withIntermediateDirectories: true)
 
-                let stagedURL = stagingDir.appendingPathComponent(plugIn.url.lastPathComponent)
-                try FileManager.default.copyItem(at: plugIn.url, to: stagedURL)
+                    let stagedURL = stagingDir.appendingPathComponent(plugIn.url.lastPathComponent)
+                    try FileManager.default.copyItem(at: plugIn.url, to: stagedURL)
 
-                // Detach from the previous host before re-attaching.
-                try injector.eject([plugIn.url], shouldDesist: false)
-                try injector.inject([stagedURL], shouldPersist: false)
+                    // Detach from the previous host before re-attaching.
+                    try injector.eject([plugIn.url], shouldDesist: false)
+                    try injector.inject([stagedURL], shouldPersist: false)
 
-                try? FileManager.default.removeItem(at: stagingDir)
+                    try? FileManager.default.removeItem(at: stagingDir)
+                }
             }
-
-            ejectList.app.reload()
-            ejectList.reload()
         } catch {
             DDLogError("\(error)", ddlog: InjectorV3.main.logger)
 
@@ -517,6 +514,51 @@ struct EjectListView: View {
         }
 
         ejectList.retargetRequest = nil
+    }
+
+    /// Runs a long-running injection / ejection job off the main thread.
+    ///
+    /// `inject` / `eject` copy whole bundles and spawn `ldid` / `ct_bypass`,
+    /// which can easily take several seconds. Doing that synchronously froze the
+    /// UI and, if the app went to the background mid-injection, got it killed by
+    /// the watchdog (`0x8badf00d`).
+    private func runInBackground(logFileURL: URL?, _ work: @escaping () throws -> Void) {
+        let view = viewControllerHost.viewController?
+            .navigationController?.view
+
+        view?.isUserInteractionEnabled = false
+
+        DispatchQueue.global(qos: .userInitiated).async {
+            do {
+                try work()
+
+                DispatchQueue.main.async {
+                    ejectList.app.reload()
+                    ejectList.reload()
+
+                    view?.isUserInteractionEnabled = true
+                }
+            } catch {
+                DispatchQueue.main.async {
+                    DDLogError("\(error)", ddlog: InjectorV3.main.logger)
+
+                    var userInfo: [String: Any] = [
+                        NSLocalizedDescriptionKey: error.localizedDescription,
+                    ]
+
+                    if let logFileURL {
+                        userInfo[NSURLErrorKey] = logFileURL
+                    }
+
+                    let nsErr = NSError(domain: Constants.gErrorDomain, code: 0, userInfo: userInfo)
+
+                    lastError = nsErr
+                    isErrorOccurred = true
+
+                    view?.isUserInteractionEnabled = true
+                }
+            }
+        }
     }
 
     private func enableAll() {
