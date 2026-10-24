@@ -103,6 +103,7 @@ struct AppListCell: View {
                         .foregroundColor(.secondary)
                         .lineLimit(1)
                 }
+            }
         }
         .contextMenu {
             if !appList.isSelectorMode {

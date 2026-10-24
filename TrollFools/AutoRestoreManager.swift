@@ -56,7 +56,7 @@ final class AutoRestoreManager {
 
         DispatchQueue.global(qos: .utility).async {
             let proxies = LSApplicationWorkspace.default().allApplications()
-            for proxy in proxies {
+            for proxy in proxies ?? [] {
                 guard let bid = proxy.applicationIdentifier(),
                       let url = proxy.bundleURL(),
                       let version = proxy.shortVersionString()
