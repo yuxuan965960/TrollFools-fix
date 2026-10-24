@@ -109,10 +109,29 @@ final class AppListModel: ObservableObject {
     }
 
     func reload() {
-        let allApplications = Self.fetchApplications(&unsupportedCount)
-        allApplications.forEach { $0.appList = self }
-        _allApplications = allApplications
-        performFilter()
+        // `fetchApplications` enumerates every installed app via LaunchServices
+        // and builds an `App` for each (several file-existence / directory checks
+        // per app). Doing that synchronously on the main thread saturated it and
+        // triggered a `scene-update` watchdog when the app went to the background,
+        // so the heavy part now runs off the main thread.
+        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
+            guard let self = self else {
+                return
+            }
+
+            var unsupportedCount = 0
+            let allApplications = Self.fetchApplications(&unsupportedCount)
+            allApplications.forEach { $0.appList = self }
+
+            DispatchQueue.main.async { [weak self] in
+                guard let self = self else {
+                    return
+                }
+                self.unsupportedCount = unsupportedCount
+                self._allApplications = allApplications
+                self.performFilter()
+            }
+        }
     }
 
     func performFilter() {

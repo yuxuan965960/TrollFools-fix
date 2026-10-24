@@ -1,5 +1,18 @@
 # Changelog
 
+## 4.4.2 Build 263 (2026-10-24)
+
+### 修复
+- 应用列表的 `fetchApplications` 枚举移到后台队列执行，结果回主线程一次性刷新，避免后台时触发 `scene-update` watchdog（主线程饱和）。
+
+------
+## 4.4.2 Build 263 (2026-10-24) [EN]
+
+### Fixed
+- `fetchApplications` now runs off the main thread and refreshes once on the main queue, preventing a `scene-update` watchdog when the app goes to the background.
+
+------
+
 ## 4.4.2 Build 262 (2026-10-22)
 
 ### 修复
