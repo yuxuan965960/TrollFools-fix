@@ -10,6 +10,8 @@ import SwiftUI
 @main
 struct TrollFoolsApp: SwiftUI.App {
 
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
+
     @AppStorage("isDisclaimerHiddenV2")
     var isDisclaimerHidden: Bool = false
 
@@ -30,6 +32,9 @@ struct TrollFoolsApp: SwiftUI.App {
                 }
             }
             .animation(.easeInOut, value: isDisclaimerHidden)
+            .onOpenURL { url in
+                openManagedAppURL(url)
+            }
         }
     }
 }

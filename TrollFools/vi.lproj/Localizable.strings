@@ -14,7 +14,6 @@
 "Advanced Settings" = "Cài đặt nâng cao";
 
 /* No comment provided by engineer. */
-"Advertisement" = "Quảng Cáo";
 
 /* No comment provided by engineer. */
 "After the app upgrade, any injected plugins will be disabled. You will need to manually re-enable them." = "Sau khi nâng cấp ứng dụng, bất kỳ plugin nào đã được tiêm sẽ bị vô hiệu hóa. Bạn sẽ cần phải kích hoạt lại chúng một cách thủ công.";
@@ -32,13 +31,10 @@
 "Are you sure you want to eject all plug-ins? This action cannot be undone." = "Bạn có chắc chắn muốn gỡ bỏ tất cả plug-in không? Hành động này không thể hoàn tác.";
 
 /* No comment provided by engineer. */
-"AutoRun" = "AutoRun";
 
 /* No comment provided by engineer. */
-"Bringing back the most advanced system and security analysis tool." = "Mang trở lại công cụ phân tích hệ thống và bảo mật tiên tiến nhất.";
 
 /* No comment provided by engineer. */
-"Buy our paid products to support us if you like TrollFools!" = "Mua sản phẩm trả phí của chúng tôi để ủng hộ chúng tôi nếu bạn thích TrollFools!";
 
 /* No comment provided by engineer. */
 "Cancel" = "Hủy";
@@ -116,7 +112,6 @@
 "Fast" = "Tiêm nhanh";
 
 /* No comment provided by engineer. */
-"Fast, feature-rich VNC server for iOS: remote control made simple." = "Máy chủ VNC nhanh, nhiều tính năng cho iOS: điều khiển từ xa trở nên đơn giản.";
 
 /* No comment provided by engineer. */
 "If needed, TrollFools will use a compatibility mode to improve success rate. Keeping this on is recommended." = "Nếu cần, TrollFools sẽ sử dụng chế độ tương thích để cải thiện tỷ lệ thành công. Nên bật chế độ này.";
@@ -125,10 +120,8 @@
 "Filza (URL Scheme) Not Installed" = "Filza (URL Scheme) chưa được cài đặt.";
 
 /* No comment provided by engineer. */
-"Full-Fledged Automation Framework for TrollStore." = "Framework tự động hóa toàn diện cho TrollStore.";
 
 /* No comment provided by engineer. */
-"Hide" = "Ẩn";
 
 /* No comment provided by engineer. */
 "If you do not know what these options mean, please do not change them." = "Nếu bạn không biết các tùy chọn này có ý nghĩa gì, đừng thay đổi chúng.";
@@ -158,7 +151,6 @@
 "Injection Strategy" = "Phương pháp tiêm";
 
 /* No comment provided by engineer. */
-"Keep your everyday apps ready." = "Giữ các ứng dụng hằng ngày của bạn luôn sẵn sàng.";
 
 /* No comment provided by engineer. */
 "Launch" = "Mở ứng dụng";
@@ -233,10 +225,8 @@
 "Rebuild Icon Cache" = "Làm mới bộ nhớ đệm biểu tượng";
 
 /* No comment provided by engineer. */
-"Record your phone calls like never before." = "Ghi âm cuộc gọi điện thoại của Bạn chưa từng có trước đây.";
 
 /* No comment provided by engineer. */
-"Reveil" = "Reveil";
 
 /* No comment provided by engineer. */
 "Search Patched…" = "Tìm kiếm sửa đổi…";
@@ -269,13 +259,11 @@
 "The content of text file “%@” is empty." = "Nội dung của tệp văn bản “%@” trống.";
 
 /* No comment provided by engineer. */
-"This is an advertisement." = "Đây là một quảng cáo.";
 
 /* No comment provided by engineer. */
 "TrollFools" = "TrollFools";
 
 /* No comment provided by engineer. */
-"TrollRecorder" = "TrollRecorder";
 
 /* No comment provided by engineer. */
 "TrollStore" = "TrollStore";
@@ -284,7 +272,6 @@
 "TrollStore Applications" = "Ứng dụng TrollStore";
 
 /* No comment provided by engineer. */
-"TrollVNC" = "TrollVNC";
 
 /* No comment provided by engineer. */
 "Unable to locate the data archive in the Debian package." = "Không thể tìm thấy kho lưu trữ dữ liệu trong gói Debian.";
@@ -308,7 +295,6 @@
 "View Logs" = "Xem nhật ký";
 
 /* No comment provided by engineer. */
-"XXTouch Elite TS" = "XXTouch Elite TS";
 
 /* No comment provided by engineer. */
 "You need to rebuild the icon cache in TrollStore to apply changes." = "Bạn cần làm mới bộ nhớ đệm biểu tượng trong TrollStore để áp dụng các thay đổi.";
@@ -341,3 +327,42 @@
 "Frameworks" = "Framework";
 /* Injection target */
 "Extensions" = "Extension";
+
+/* ===== Ported from TrollFools 4.3-249 ===== */
+"Add to Favorites" = "Thêm vào mục yêu thích";
+"Add to Shortcuts" = "Thêm vào Menu nhanh";
+"An awesome music visualizer." = "An awesome music visualizer.";
+"Auto Enable Plug-Ins" = "Tự động bật Plug-In";
+"Auto Enable on Version Change" = "Tự động bật khi thay đổi phiên bản";
+"Auto Enabling Plug-Ins..." = "Đang tự động bật plug-in...";
+"Auto Restore" = "TrollFools Khôi phục tự động";
+"Background Daemon" = "Trình nền (Daemon) hệ thống";
+"Blacklist" = "Danh sách đen";
+"Choose whether to automatically enable plug-ins by default when an application updates." = "Chọn xem có tự động bật plug-in theo mặc định khi ứng dụng cập nhật hay không.";
+"Continue Inject" = "Tiếp tục tiêm";
+"Custom Name" = "Tên tùy chỉnh";
+"Enable All Disabled Plug-Ins" = "Bật tất cả các plugin đã tắt";
+"Enable All Plug-Ins" = "Bật tất cả Plug-In";
+"Enabling Plug-Ins..." = "Đang bật plugin...";
+"Enter new name" = "Nhập tên mới";
+"Favorite" = "Yêu thích";
+"Favorite Applications" = "Ứng dụng yêu thích";
+"If blacklist is enabled, this app will be skipped when enabling all disabled plugins." = "Nếu danh sách đen được bật, ứng dụng này sẽ bị bỏ qua khi bật tất cả các plugin đã bị tắt.";
+"Leave it empty to restore the original name." = "Để trống để khôi phục tên gốc.";
+"Letterpress" = "Letterpress";
+"Other" = "Khác";
+"Remove from Favorites" = "Xóa khỏi mục yêu thích";
+"Remove from Shortcuts" = "Xóa khỏi Menu nhanh";
+"Rename" = "Đổi tên";
+"Replace" = "Thay thế";
+"Save" = "Lưu";
+"Start Daemon" = "Bắt đầu Daemon";
+"Start restoring plugins for \"%@\"" = "Đang bắt đầu khôi phục các plugin cho \"%@\"...";
+"Stop Daemon" = "Dừng Daemon";
+"Successfully restored plugins for \"%@\"" = "Đã khôi phục thành công các plugin cho \"%@\"";
+"The daemon is running and will monitor app updates in the background." = "Trình nền đang chạy và sẽ theo dõi các bản cập nhật ứng dụng trong nền.";
+"The daemon is stopped. TrollFools won't auto-inject until you open the app." = "Trình nền đã dừng. TrollFools sẽ không tự động chèn cho đến khi bạn mở ứng dụng.";
+"This will enable all disabled plug-ins across all applications. This action may take some time." = "Thao tác này sẽ bật tất cả các plugin đã bị tắt trên tất cả các ứng dụng. Quá trình này có thể mất một chút thời gian.";
+"Turn Off All" = "Tắt tất cả";
+"Turn On All" = "Bật tất cả";
+"Unsupported Applications" = "Ứng dụng không được hỗ trợ";

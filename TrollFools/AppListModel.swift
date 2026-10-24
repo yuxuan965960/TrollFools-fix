@@ -153,6 +153,10 @@ final class AppListModel: ObservableObject {
             filteredApplications = filteredApplications.filter { $0.isInjected || $0.hasPersistedAssets }
         }
 
+        if filter.showFavoritesOnly {
+            filteredApplications = filteredApplications.filter { $0.isFavorite }
+        }
+
         switch activeScope {
         case .all:
             activeScopeApps = Self.groupedAppList(filteredApplications)
@@ -203,11 +207,19 @@ final class AppListModel: ObservableObject {
                 return app
             }
 
-        let filteredApps = allApps
-            .filter { $0.isSystem || InjectorV3.main.checkIsEligibleAppBundle($0.url) }
+        let eligibility = allApps.map { $0.isSystem || InjectorV3.main.checkIsEligibleAppBundle($0.url) }
+
+        let filteredApps = zip(allApps, eligibility)
+            .filter { $0.1 }
+            .map { $0.0 }
             .sorted { $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending }
 
-        unsupportedCount = allApps.count - filteredApps.count
+        let unsupportedBids = zip(allApps, eligibility)
+            .filter { !$0.1 }
+            .map { $0.0.bid }
+
+        AppManagement.shared.setUnsupportedApps(unsupportedBids)
+        unsupportedCount = unsupportedBids.count
 
         return filteredApps
     }

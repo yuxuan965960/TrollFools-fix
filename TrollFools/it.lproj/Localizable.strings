@@ -14,7 +14,6 @@
 "Advanced Settings" = "Impostazioni Avanzate";
 
 /* No comment provided by engineer. */
-"Advertisement" = "Advertisement";
 
 /* TODO */
 "After the app upgrade, any injected plugins will be disabled. You will need to manually re-enable them." = "After the app upgrade, any injected plugins will be disabled. You will need to manually re-enable them.";
@@ -32,13 +31,10 @@
 "Are you sure you want to eject all plug-ins? This action cannot be undone." = "Are you sure you want to eject all plug-ins? This action cannot be undone.";
 
 /* No comment provided by engineer. */
-"AutoRun" = "AutoRun";
 
 /* No comment provided by engineer. */
-"Bringing back the most advanced system and security analysis tool." = "Portiamo indietro il più avanzato strumento di analisi di sistema e della sicurezza.";
 
 /* TODO */
-"Buy our paid products to support us if you like TrollFools!" = "Buy our paid products to support us if you like TrollFools!";
 
 /* StripedTextTableViewController */
 "Cancel" = "Cancella";
@@ -116,7 +112,6 @@
 "Fast" = "Veloce";
 
 /* TODO */
-"Fast, feature-rich VNC server for iOS: remote control made simple." = "Fast, feature-rich VNC server for iOS: remote control made simple.";
 
 /* TODO */
 "If needed, TrollFools will use a compatibility mode to improve success rate. Keeping this on is recommended." = "If needed, TrollFools will use a compatibility mode to improve success rate. Keeping this on is recommended.";
@@ -125,10 +120,8 @@
 "Filza (URL Scheme) Not Installed" = "Filza (URL Scheme) Non Installato";
 
 /* TODO */
-"Full-Fledged Automation Framework for TrollStore." = "Full-Fledged Automation Framework for TrollStore.";
 
 /* No comment provided by engineer. */
-"Hide" = "Hide";
 
 /* No comment provided by engineer. */
 "If you do not know what these options mean, please do not change them." = "Se non sai cosa significano queste opzioni, non cambiarle.";
@@ -158,7 +151,6 @@
 "Injection Strategy" = "Strategia Inietazione";
 
 /* No comment provided by engineer. */
-"Keep your everyday apps ready." = "Tieni le tue app di ogni giorno sempre pronte.";
 
 /* No comment provided by engineer. */
 "Launch" = "Lancia";
@@ -233,10 +225,8 @@
 "Rebuild Icon Cache" = "Ricrostruisci Cache Icone";
 
 /* No comment provided by engineer. */
-"Record your phone calls like never before." = "Registra le tue chiamate come niente prima.";
 
 /* No comment provided by engineer. */
-"Reveil" = "Rivela";
 
 /* No comment provided by engineer. */
 "Search Patched…" = "Cerca con Patch…";
@@ -269,13 +259,11 @@
 "The content of text file “%@” is empty." = "Il contenuto del file “%@” è vuoto.";
 
 /* TODO */
-"This is an advertisement." = "This is an advertisement.";
 
 /* No comment provided by engineer. */
 "TrollFools" = "TrollFools";
 
 /* No comment provided by engineer. */
-"TrollRecorder" = "TrollRecorder";
 
 /* No comment provided by engineer. */
 "TrollStore" = "TrollStore";
@@ -284,7 +272,6 @@
 "TrollStore Applications" = "Applicazioni TrollStore";
 
 /* TODO */
-"TrollVNC" = "TrollVNC";
 
 /* TODO */
 "Unable to locate the data archive in the Debian package." = "Unable to locate the data archive in the Debian package.";
@@ -308,7 +295,6 @@
 "View Logs" = "Mostra Log";
 
 /* TODO */
-"XXTouch Elite TS" = "XXTouch Elite TS";
 
 /* No comment provided by engineer. */
 "You need to rebuild the icon cache in TrollStore to apply changes." = "Devi ricostruire la cache delle icone in TrollStore per applicare le modifiche.";
@@ -341,3 +327,42 @@
 "Frameworks" = "Framework";
 /* Injection target */
 "Extensions" = "Extension";
+
+/* ===== Ported from TrollFools 4.3-249 ===== */
+"Add to Favorites" = "Aggiungi ai preferiti";
+"Add to Shortcuts" = "Aggiungi al menu rapido";
+"An awesome music visualizer." = "An awesome music visualizer.";
+"Auto Enable Plug-Ins" = "Abilita automaticamente i plug-in";
+"Auto Enable on Version Change" = "Abilita automaticamente al cambio di versione";
+"Auto Enabling Plug-Ins..." = "Abilitazione automatica dei plug-in in corso...";
+"Auto Restore" = "TrollFools Ripristino Automatico";
+"Background Daemon" = "Demone in Background";
+"Blacklist" = "Blacklist";
+"Choose whether to automatically enable plug-ins by default when an application updates." = "Scegli se abilitare automaticamente i plug-in per impostazione predefinita quando un'applicazione si aggiorna.";
+"Continue Inject" = "Continua iniezione";
+"Custom Name" = "Nome personalizzato";
+"Enable All Disabled Plug-Ins" = "Abilita tutti i plugin disabilitati";
+"Enable All Plug-Ins" = "Abilita tutti i plugin";
+"Enabling Plug-Ins..." = "Abilitazione plugin in corso...";
+"Enter new name" = "Inserisci un nuovo nome";
+"Favorite" = "Preferiti";
+"Favorite Applications" = "Applicazioni preferite";
+"If blacklist is enabled, this app will be skipped when enabling all disabled plugins." = "Se la blacklist è abilitata, questa app verrà saltata durante l'abilitazione di tutti i plugin disabilitati.";
+"Leave it empty to restore the original name." = "Lascia vuoto per ripristinare il nome originale.";
+"Letterpress" = "Letterpress";
+"Other" = "Altro";
+"Remove from Favorites" = "Rimuovi dai preferiti";
+"Remove from Shortcuts" = "Rimuovi dal menu rapido";
+"Rename" = "Rinomina";
+"Replace" = "Sostituisci";
+"Save" = "Salva";
+"Start Daemon" = "Avvia Demone";
+"Start restoring plugins for \"%@\"" = "Inizio ripristino plugin per \"%@\"...";
+"Stop Daemon" = "Arresta Demone";
+"Successfully restored plugins for \"%@\"" = "Plugin ripristinati con successo per \"%@\"";
+"The daemon is running and will monitor app updates in the background." = "Il demone è in esecuzione e monitorerà gli aggiornamenti delle app in background.";
+"The daemon is stopped. TrollFools won't auto-inject until you open the app." = "Il demone è interrotto. TrollFools non eseguirà l'iniezione automatica finché non aprirai l'app.";
+"This will enable all disabled plug-ins across all applications. This action may take some time." = "Questa azione abiliterà tutti i plugin disabilitati in tutte le applicazioni. L'operazione potrebbe richiedere del tempo.";
+"Turn Off All" = "Disattiva tutto";
+"Turn On All" = "Attiva tutto";
+"Unsupported Applications" = "Applicazioni non supportate";

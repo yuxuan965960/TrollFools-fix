@@ -14,7 +14,6 @@
 "Advanced Settings" = "高级选项";
 
 /* No comment provided by engineer. */
-"Advertisement" = "广告";
 
 /* No comment provided by engineer. */
 "After the app upgrade, any injected plugins will be disabled. You will need to manually re-enable them." = "App 更新后，所有已注入的插件都会被禁用。你需要手动重新启用它们。";
@@ -32,13 +31,10 @@
 "Are you sure you want to eject all plug-ins? This action cannot be undone." = "你确定要推出所有插件吗？此操作无法撤销。";
 
 /* No comment provided by engineer. */
-"AutoRun" = "AutoRun";
 
 /* No comment provided by engineer. */
-"Bringing back the most advanced system and security analysis tool." = "最强大的系统和安全分析工具，再次归来。";
 
 /* No comment provided by engineer. */
-"Buy our paid products to support us if you like TrollFools!" = "如果你喜欢巨魔注入器，请购买我们的付费产品以支持我们！";
 
 /* StripedTextTableViewController */
 "Cancel" = "取消";
@@ -116,7 +112,6 @@
 "Fast" = "快速";
 
 /* No comment provided by engineer. */
-"Fast, feature-rich VNC server for iOS: remote control made simple." = "功能强大的 iOS VNC 服务器：远程控制，从未如此简单。";
 
 /* No comment provided by engineer. */
 "If needed, TrollFools will use a compatibility mode to improve success rate. Keeping this on is recommended." = "当常规方式效果不稳定时，TrollFools 会自动尝试兼容模式以提高成功率。建议保持开启。";
@@ -125,10 +120,8 @@
 "Filza (URL Scheme) Not Installed" = "未安装支持 URL Scheme 的 Filza";
 
 /* No comment provided by engineer. */
-"Full-Fledged Automation Framework for TrollStore." = "适用于 TrollStore 的全功能自动化框架。";
 
 /* No comment provided by engineer. */
-"Hide" = "隐藏";
 
 /* No comment provided by engineer. */
 "If you do not know what these options mean, please do not change them." = "如果你不知道这些选项的含义，请不要更改。";
@@ -158,7 +151,6 @@
 "Injection Strategy" = "注入策略";
 
 /* No comment provided by engineer. */
-"Keep your everyday apps ready." = "让常用应用随时待命。";
 
 /* No comment provided by engineer. */
 "Launch" = "启动";
@@ -233,10 +225,8 @@
 "Rebuild Icon Cache" = "重建图标缓存";
 
 /* No comment provided by engineer. */
-"Record your phone calls like never before." = "通话录音，从未如此简单。";
 
 /* No comment provided by engineer. */
-"Reveil" = "Reveil";
 
 /* No comment provided by engineer. */
 "Search Patched…" = "搜索 已注入…";
@@ -269,13 +259,11 @@
 "The content of text file “%@” is empty." = "文本文件 “%@” 的内容为空。";
 
 /* No comment provided by engineer. */
-"This is an advertisement." = "这是一则广告。";
 
 /* No comment provided by engineer. */
 "TrollFools" = "巨魔注入器";
 
 /* No comment provided by engineer. */
-"TrollRecorder" = "巨魔录音机";
 
 /* No comment provided by engineer. */
 "TrollStore" = "巨魔应用";
@@ -284,7 +272,6 @@
 "TrollStore Applications" = "巨魔应用";
 
 /* No comment provided by engineer. */
-"TrollVNC" = "TrollVNC";
 
 /* No comment provided by engineer. */
 "Unable to locate the data archive in the Debian package." = "无法在 Debian 软件包中找到数据归档。";
@@ -308,7 +295,6 @@
 "View Logs" = "查看日志";
 
 /* No comment provided by engineer. */
-"XXTouch Elite TS" = "XXTouch Elite TS";
 
 /* No comment provided by engineer. */
 "You need to rebuild the icon cache in TrollStore to apply changes." = "你需要在 TrollStore 中重建图标缓存以应用更改。";
@@ -341,3 +327,42 @@
 "Frameworks" = "Framework";
 /* Injection target */
 "Extensions" = "Extension";
+
+/* ===== Ported from TrollFools 4.3-249 ===== */
+"Add to Favorites" = "收藏应用";
+"Add to Shortcuts" = "添加到桌面菜单";
+"An awesome music visualizer." = "一款超棒的音乐可视化工具。";
+"Auto Enable Plug-Ins" = "版本变化自动启用插件";
+"Auto Enable on Version Change" = "版本变化自动启用插件";
+"Auto Enabling Plug-Ins..." = "检测到版本变化正在启用插件";
+"Auto Restore" = "TrollFools 自动恢复";
+"Background Daemon" = "后台守护进程";
+"Blacklist" = "黑名单";
+"Choose whether to automatically enable plug-ins by default when an application updates." = "选择是否将所有应用更新后自动启用插件的开关打开或关闭。";
+"Continue Inject" = "继续注入";
+"Custom Name" = "自定义名称";
+"Enable All Disabled Plug-Ins" = "启用所有已禁用的插件";
+"Enable All Plug-Ins" = "启用所有插件";
+"Enabling Plug-Ins..." = "正在启用插件...";
+"Enter new name" = "输入新名称";
+"Favorite" = "收藏应用";
+"Favorite Applications" = "收藏应用";
+"If blacklist is enabled, this app will be skipped when enabling all disabled plugins." = "如果开启黑名单，在使用“一键启用所有插件”功能时，此应用将被跳过。";
+"Leave it empty to restore the original name." = "留空以恢复原始名称。";
+"Letterpress" = "活字印刷术";
+"Other" = "其它";
+"Remove from Favorites" = "取消收藏";
+"Remove from Shortcuts" = "从桌面菜单移除";
+"Rename" = "备注";
+"Replace" = "替换";
+"Save" = "保存";
+"Start Daemon" = "启动守护进程";
+"Start restoring plugins for \"%@\"" = "正在为「%@」恢复注入插件...";
+"Stop Daemon" = "停止守护进程";
+"Successfully restored plugins for \"%@\"" = "已成功为「%@」恢复注入插件";
+"The daemon is running and will monitor app updates in the background." = "守护进程运行中，将在后台自动监控应用更新并恢复注入。";
+"The daemon is stopped. TrollFools won't auto-inject until you open the app." = "守护进程已停止。TrollFools 不会在后台自动注入，除非你手动打开应用。";
+"This will enable all disabled plug-ins across all applications. This action may take some time." = "此操作将启用所有应用中已停用的插件，可能需要一些时间。";
+"Turn Off All" = "全部关闭";
+"Turn On All" = "全部开启";
+"Unsupported Applications" = "不支持的应用";

@@ -27,19 +27,8 @@ struct AppListView: View {
 
     @State var latestVersionString: String?
 
-    @AppStorage("isAdvertisementHiddenV2")
-    var isAdvertisementHidden: Bool = false
-
     @AppStorage("isWarningHidden")
     var isWarningHidden: Bool = false
-
-    var shouldShowAdvertisement: Bool {
-        !isAdvertisementHidden &&
-            !appList.filter.isSearching &&
-            !appList.filter.showPatchedOnly &&
-            !appList.isRebuildNeeded &&
-            !appList.isSelectorMode
-    }
 
     var appString: String {
         let appNameString = Bundle.main.infoDictionary?["CFBundleName"] as? String ?? "TrollFools"
@@ -123,10 +112,6 @@ struct AppListView: View {
                 selectorOpenedURL = urlIdent
             }
             .onAppear {
-                if Double.random(in: 0 ..< 1) < 0.1 {
-                    isAdvertisementHidden = false
-                }
-
                 CheckUpdateManager.shared.checkUpdateIfNeeded { latestVersion, _ in
                     DispatchQueue.main.async {
                         withAnimation {
@@ -239,20 +224,13 @@ struct AppListView: View {
         List {
             topSection
 
-            if #available(iOS 15, *) {
-                if appList.activeScope == .all && shouldShowAdvertisement {
-                    advertisementSection
-                }
-            }
-
             appSections
         }
         .animation(.easeOut, value: combines(
             appList.isRebuildNeeded,
             appList.activeScope,
             appList.filter,
-            appList.unsupportedCount,
-            shouldShowAdvertisement
+            appList.unsupportedCount
         ))
         .listStyle(.insetGrouped)
         .navigationTitle(appList.isSelectorMode ?
@@ -268,6 +246,16 @@ struct AppListView: View {
                         Text(NSLocalizedString("Select Application to Inject", comment: "")).font(.caption)
                     }
                 }
+            }
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button {
+                    appList.filter.showFavoritesOnly.toggle()
+                } label: {
+                    Image(systemName: appList.filter.showFavoritesOnly
+                        ? "star.fill"
+                        : "star")
+                }
+                .accessibilityLabel(NSLocalizedString("Favorite Applications", comment: ""))
             }
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button {
@@ -313,6 +301,16 @@ struct AppListView: View {
                                 ? String(format: NSLocalizedString("And %d more unsupported user applications.", comment: ""), appList.unsupportedCount)
                                 : "")
                     )
+                    .transition(.opacity)
+                }
+
+                if !appList.isSelectorMode && appList.unsupportedCount > 0 {
+                    NavigationLink {
+                        UnsupportedAppListView(bids: AppManagement.shared.unsupportedApps)
+                    } label: {
+                        Text(NSLocalizedString("Unsupported Applications", comment: ""))
+                            .font(.footnote)
+                    }
                     .transition(.opacity)
                 }
             }
@@ -391,37 +389,6 @@ struct AppListView: View {
             }
         }
         .id("AppSection-\(sectionKey)")
-    }
-
-    @available(iOS 15.0, *)
-    var advertisementSection: some View {
-        Section {
-            Button {
-                UIApplication.shared.open(App.advertisementApp.url)
-            } label: {
-                if #available(iOS 16, *) {
-                    AppListCell(app: App.advertisementApp)
-                } else {
-                    AppListCell(app: App.advertisementApp)
-                        .padding(.vertical, 4)
-                }
-            }
-            .foregroundColor(.primary)
-            .swipeActions(edge: .trailing, allowsFullSwipe: true) {
-                Button {
-                    isAdvertisementHidden = true
-                } label: {
-                    Label(NSLocalizedString("Hide", comment: ""), systemImage: "eye.slash")
-                }
-                .tint(.red)
-            }
-        } header: {
-            paddedHeaderFooterText(NSLocalizedString("Advertisement", comment: ""))
-                .textCase(.none)
-        } footer: {
-            paddedHeaderFooterText(NSLocalizedString("Buy our paid products to support us if you like TrollFools!", comment: ""))
-        }
-        .id("AdsSection")
     }
 
     @ViewBuilder

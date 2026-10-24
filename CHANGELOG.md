@@ -1,5 +1,34 @@
 # Changelog
 
+## 4.4.2 Build 265 (2026-10-25)
+
+### 新增
+- 深链支持：`trollfools://openManagedApp?bid=<bundle-id>` 可直接打开指定受管应用。
+- 桌面快捷方式：可把常用应用固定到主屏幕长按快捷菜单（最多 4 个）。
+- 后台守护进程：开启后监听应用更新，自动恢复已持久化的插件注入。
+- 收藏：首页工具栏新增收藏过滤，单元格长按菜单可收藏/取消收藏。
+- 黑名单：长按菜单可把应用加入黑名单。
+- 插件备注：插件列表长按菜单可自定义显示名。
+- 不支持应用列表：首页底部新增入口，可查看被判定为不支持注入的应用。
+- 版本变化自动启用插件：高级选项中可为单个应用开启。
+- 移除内置广告（Letterpress / TrollRecorder / Reveil 等广告位与图标资源）。
+
+------
+## 4.4.2 Build 265 (2026-10-25) [EN]
+
+### Added
+- Deep link: `trollfools://openManagedApp?bid=<bundle-id>` opens a managed app directly.
+- Home-screen shortcuts: pin up to 4 frequently used apps to the long-press quick menu.
+- Background daemon: when enabled, watches for app updates and auto-restores persisted plugin injections.
+- Favorites: a star filter in the home toolbar, plus favorite/unfavorite in the cell context menu.
+- Blacklist: add apps to a blacklist via the context menu.
+- Plugin rename: set a custom display name for a plugin via the context menu.
+- Unsupported apps list: a new entry at the bottom of the home list shows apps that cannot be injected.
+- Auto-enable on version change: per-app toggle in Advanced Settings.
+- Removed built-in ads (Letterpress / TrollRecorder / Reveil and related assets).
+
+------
+
 ## 4.4.2 Build 263 (2026-10-24)
 
 ### 修复

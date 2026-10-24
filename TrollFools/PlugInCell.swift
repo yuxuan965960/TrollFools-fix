@@ -21,6 +21,7 @@ struct PlugInCell: View {
 
     @Binding var quickLookExport: URL?
     @State var isEnabled: Bool = false
+    @State var isRenaming = false
 
     let plugIn: InjectedPlugIn
 
@@ -29,10 +30,13 @@ struct PlugInCell: View {
         _quickLookExport = quickLookExport
     }
 
+    var displayName: String {
+        AppManagement.shared.renamedPlugIn(plugIn.url.lastPathComponent) ?? plugIn.url.lastPathComponent
+    }
+
     @available(iOS 15, *)
     var highlightedName: AttributedString {
-        let name = plugIn.url.lastPathComponent
-        var attributedString = AttributedString(name)
+        var attributedString = AttributedString(displayName)
         if let range = attributedString.range(of: ejectList.filter.searchKeyword, options: [.caseInsensitive, .diacriticInsensitive]) {
             attributedString[range].foregroundColor = .accentColor
         }
@@ -106,6 +110,20 @@ struct PlugInCell: View {
                 }
             }
             .disabled(!isFilzaInstalled)
+
+            Button {
+                isRenaming = true
+            } label: {
+                Label(NSLocalizedString("Rename", comment: ""), systemImage: "pencil")
+            }
+        }
+        .sheet(isPresented: $isRenaming) {
+            RenameSheetView(
+                pluginFilename: plugIn.url.lastPathComponent,
+                currentName: AppManagement.shared.renamedPlugIn(plugIn.url.lastPathComponent)
+            ) { newName in
+                AppManagement.shared.setPluginRename(newName, for: plugIn.url.lastPathComponent)
+            }
         }
     }
 
@@ -126,7 +144,7 @@ struct PlugInCell: View {
                         .font(.headline)
                         .lineLimit(2)
                 } else {
-                    Text(plugIn.url.lastPathComponent)
+                    Text(displayName)
                         .font(.headline)
                         .lineLimit(2)
                 }

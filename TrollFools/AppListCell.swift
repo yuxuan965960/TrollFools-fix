@@ -74,11 +74,11 @@ struct AppListCell: View {
                 if #available(iOS 15, *) {
                     Text(highlightedId)
                         .font(.subheadline)
-                        .lineLimit(app.isAdvertisement ? 2 : 1)
+                        .lineLimit(1)
                 } else {
                     Text(app.bid)
                         .font(.subheadline)
-                        .lineLimit(app.isAdvertisement ? 2 : 1)
+                        .lineLimit(1)
                 }
             }
 
@@ -103,15 +103,9 @@ struct AppListCell: View {
                         .foregroundColor(.secondary)
                         .lineLimit(1)
                 }
-            } else if app.isAdvertisement {
-                Image("badge-ad")
-                    .foregroundColor(.secondary)
-                    .scaleEffect(1.2)
-                    .accessibilityLabel(NSLocalizedString("This is an advertisement.", comment: ""))
-            }
         }
         .contextMenu {
-            if !appList.isSelectorMode && !app.isAdvertisement {
+            if !appList.isSelectorMode {
                 cellContextMenuWrapper
             }
         }
@@ -160,6 +154,38 @@ struct AppListCell: View {
             }
         }
         .disabled(!isFilzaInstalled)
+
+        Divider()
+
+        Button {
+            AppManagement.shared.toggleFavorite(app.bid)
+        } label: {
+            if app.isFavorite {
+                Label(NSLocalizedString("Remove from Favorites", comment: ""), systemImage: "star.slash")
+            } else {
+                Label(NSLocalizedString("Add to Favorites", comment: ""), systemImage: "star")
+            }
+        }
+
+        Button {
+            AppManagement.shared.setPinnedShortcut(app.bid, pinned: !AppManagement.shared.isPinnedShortcut(app.bid))
+        } label: {
+            if AppManagement.shared.isPinnedShortcut(app.bid) {
+                Label(NSLocalizedString("Remove from Shortcuts", comment: ""), systemImage: "menubar.dock.rectangle")
+            } else {
+                Label(NSLocalizedString("Add to Shortcuts", comment: ""), systemImage: "plus.square.on.square")
+            }
+        }
+
+        Button {
+            AppManagement.shared.toggleBlacklist(app.bid)
+        } label: {
+            if app.isBlacklisted {
+                Label(NSLocalizedString("Blacklist", comment: ""), systemImage: "checkmark.shield")
+            } else {
+                Label(NSLocalizedString("Blacklist", comment: ""), systemImage: "shield")
+            }
+        }
     }
 
     @ViewBuilder
