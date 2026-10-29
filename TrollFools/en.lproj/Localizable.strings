@@ -71,6 +71,33 @@
 /* No comment provided by engineer. */
 "Continue Injection" = "Continue Injection";
 
+/* No comment provided by engineer. */
+"Version Change Auto Enable" = "Version Change Auto Enable";
+
+/* No comment provided by engineer. */
+"Choose whether to automatically enable plug-ins after all apps are updated." = "Choose whether to automatically enable plug-ins after all apps are updated.";
+
+/* No comment provided by engineer. */
+"Turn On All" = "Turn On All";
+
+/* No comment provided by engineer. */
+"Turn Off All" = "Turn Off All";
+
+/* No comment provided by engineer. */
+"Background Daemon" = "Background Daemon";
+
+/* No comment provided by engineer. */
+"The daemon has stopped. TrollFools will not inject automatically in the background unless you have manually opened the app." = "The daemon has stopped. TrollFools will not inject automatically in the background unless you have manually opened the app.";
+
+/* No comment provided by engineer. */
+"Start Daemon" = "Start Daemon";
+
+/* No comment provided by engineer. */
+"Enable All Disabled Plug-Ins" = "Enable All Disabled Plug-Ins";
+
+/* No comment provided by engineer. */
+"This will enable all disabled plug-ins across all apps and may take a while." = "This will enable all disabled plug-ins across all apps and may take a while.";
+
 "Disable All" = "Disable All";
 
 /* StripedTextTableViewController */

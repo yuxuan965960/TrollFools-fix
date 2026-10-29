@@ -56,6 +56,7 @@ final class AppListModel: ObservableObject {
     @Published var activeScopeApps: OrderedDictionary<String, [App]> = [:]
 
     @Published var unsupportedCount: Int = 0
+    @Published var isEnablingAllDisabledPlugIns = false
 
     lazy var isFilzaInstalled: Bool = {
         if let filzaURL {
@@ -105,6 +106,72 @@ final class AppListModel: ObservableObject {
     deinit {
         if darwinNotifyToken != NOTIFY_TOKEN_INVALID {
             notify_cancel(darwinNotifyToken)
+        }
+    }
+
+    /// Re-injects every persisted-but-disabled plug-in of every app.
+    ///
+    /// Used by the “Enable All Disabled Plug-Ins” toolbar switch. The heavy
+    /// work runs off the main thread; `isEnablingAllDisabledPlugIns` drives the
+    /// progress indicator in the toolbar.
+    func enableAllDisabledPlugIns() {
+        guard !isEnablingAllDisabledPlugIns else {
+            return
+        }
+
+        isEnablingAllDisabledPlugIns = true
+
+        let apps = _allApplications
+        let defaults = UserDefaults.standard
+
+        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
+            for app in apps {
+                guard InjectorV3.main.hasPersistedAssets(bid: app.bid) else {
+                    continue
+                }
+
+                do {
+                    let injector = try InjectorV3(app.url)
+
+                    if injector.appID.isEmpty {
+                        injector.appID = app.bid
+                    }
+
+                    if injector.teamID.isEmpty {
+                        injector.teamID = app.teamID
+                    }
+
+                    injector.useWeakReference = defaults.object(forKey: "UseWeakReference-\(app.bid)") as? Bool ?? true
+                    injector.preferMainExecutable = defaults.object(forKey: "PreferMainExecutable-\(app.bid)") as? Bool ?? false
+                    injector.useFrameworkEnumerationFallback = defaults.object(forKey: "UseFrameworkEnumerationFallback-\(app.bid)") as? Bool ?? true
+
+                    let enabledNames = Set(
+                        InjectorV3.main.injectedAssetURLsInBundle(app.url)
+                            .map { $0.lastPathComponent }
+                    )
+
+                    let disabledURLs = InjectorV3.main.persistedAssetURLs(bid: app.bid)
+                        .filter { !enabledNames.contains($0.lastPathComponent) }
+
+                    guard !disabledURLs.isEmpty else {
+                        continue
+                    }
+
+                    for url in disabledURLs {
+                        injector.pinnedInjectionTarget = InjectionTargetStore.shared
+                            .target(forPlugInName: url.lastPathComponent, bundleID: app.bid)
+
+                        try injector.inject([url], shouldPersist: false)
+                    }
+                } catch {
+                    DDLogError("enableAllDisabledPlugIns(\(app.bid)): \(error)", ddlog: InjectorV3.main.logger)
+                }
+            }
+
+            DispatchQueue.main.async {
+                self?.isEnablingAllDisabledPlugIns = false
+                self?.reload()
+            }
         }
     }
 

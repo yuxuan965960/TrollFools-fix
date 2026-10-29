@@ -71,6 +71,33 @@
 /* No comment provided by engineer. */
 "Continue Injection" = "继续注入";
 
+/* No comment provided by engineer. */
+"Version Change Auto Enable" = "版本变化自动启用插件";
+
+/* No comment provided by engineer. */
+"Choose whether to automatically enable plug-ins after all apps are updated." = "选择是否将所有应用更新后自动启用插件的开关打开或关闭。";
+
+/* No comment provided by engineer. */
+"Turn On All" = "全部开启";
+
+/* No comment provided by engineer. */
+"Turn Off All" = "全部关闭";
+
+/* No comment provided by engineer. */
+"Background Daemon" = "后台守护进程";
+
+/* No comment provided by engineer. */
+"The daemon has stopped. TrollFools will not inject automatically in the background unless you have manually opened the app." = "守护进程已停止。TrollFools 不会在后台自动注入，除非你已手动打开应用。";
+
+/* No comment provided by engineer. */
+"Start Daemon" = "启动守护进程";
+
+/* No comment provided by engineer. */
+"Enable All Disabled Plug-Ins" = "启用所有禁用的插件";
+
+/* No comment provided by engineer. */
+"This will enable all disabled plug-ins across all apps and may take a while." = "此操作将启动所有应用中已停用的插件，可能需要一些时间。";
+
 "Disable All" = "全部禁用";
 
 /* StripedTextTableViewController */

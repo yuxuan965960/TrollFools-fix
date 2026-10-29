@@ -270,6 +270,10 @@ struct AppListView: View {
                 }
             }
             ToolbarItem(placement: .navigationBarTrailing) {
+                AppListQuickSwitches()
+                    .environmentObject(appList)
+            }
+            ToolbarItem(placement: .navigationBarTrailing) {
                 Button {
                     appList.filter.showPatchedOnly.toggle()
                 } label: {
@@ -504,6 +508,105 @@ struct AppListView: View {
             Text(content)
                 .font(.footnote)
                 .padding(.horizontal, 16)
+        }
+    }
+}
+
+/// Two compact toolbar switches, placed to the left of “Show Patched Only”.
+///
+/// - tap the first one: “Version Change Auto Enable”
+/// - long press the first one: “Background Daemon”
+/// - tap the second one: “Enable All Disabled Plug-Ins”
+private struct AppListQuickSwitches: View {
+    private enum SwitchAlert {
+        case autoEnable
+        case daemon
+        case enableDisabled
+    }
+
+    @EnvironmentObject var appList: AppListModel
+
+    @AppStorage("AutoEnablePlugInsOnVersionChange") private var autoEnableOnVersionChange: Bool = false
+    @AppStorage("BackgroundDaemonRunning") private var daemonRunning: Bool = false
+
+    @State private var presentedAlert: SwitchAlert = .autoEnable
+    @State private var isAlertPresented = false
+
+    var body: some View {
+        HStack(spacing: 16) {
+            Button {
+                presentedAlert = .autoEnable
+                isAlertPresented = true
+            } label: {
+                Image(systemName: autoEnableOnVersionChange
+                    ? "arrow.triangle.2.circlepath.circle.fill"
+                    : "arrow.triangle.2.circlepath.circle")
+            }
+            .onLongPressGesture(minimumDuration: 0.5) {
+                presentedAlert = .daemon
+                isAlertPresented = true
+            }
+            .accessibilityLabel(NSLocalizedString("Version Change Auto Enable", comment: ""))
+
+            Button {
+                presentedAlert = .enableDisabled
+                isAlertPresented = true
+            } label: {
+                if appList.isEnablingAllDisabledPlugIns {
+                    ProgressView()
+                        .progressViewStyle(CircularProgressViewStyle())
+                } else {
+                    Image(systemName: "power.circle")
+                }
+            }
+            .disabled(appList.isEnablingAllDisabledPlugIns)
+            .accessibilityLabel(NSLocalizedString("Enable All Disabled Plug-Ins", comment: ""))
+        }
+        .alert(alertTitle, isPresented: $isAlertPresented) {
+            switch presentedAlert {
+            case .autoEnable:
+                Button(NSLocalizedString("Turn On All", comment: "")) {
+                    autoEnableOnVersionChange = true
+                }
+                Button(NSLocalizedString("Turn Off All", comment: ""), role: .destructive) {
+                    autoEnableOnVersionChange = false
+                }
+                Button(NSLocalizedString("Cancel", comment: ""), role: .cancel) {}
+            case .daemon:
+                Button(NSLocalizedString("Cancel", comment: ""), role: .cancel) {}
+                Button(NSLocalizedString("Start Daemon", comment: "")) {
+                    daemonRunning = true
+                }
+            case .enableDisabled:
+                Button(NSLocalizedString("Cancel", comment: ""), role: .cancel) {}
+                Button(NSLocalizedString("Confirm", comment: ""), role: .destructive) {
+                    appList.enableAllDisabledPlugIns()
+                }
+            }
+        } message: {
+            Text(alertMessage)
+        }
+    }
+
+    private var alertTitle: String {
+        switch presentedAlert {
+        case .autoEnable:
+            return NSLocalizedString("Version Change Auto Enable", comment: "")
+        case .daemon:
+            return NSLocalizedString("Background Daemon", comment: "")
+        case .enableDisabled:
+            return NSLocalizedString("Enable All Disabled Plug-Ins", comment: "")
+        }
+    }
+
+    private var alertMessage: String {
+        switch presentedAlert {
+        case .autoEnable:
+            return NSLocalizedString("Choose whether to automatically enable plug-ins after all apps are updated.", comment: "")
+        case .daemon:
+            return NSLocalizedString("The daemon has stopped. TrollFools will not inject automatically in the background unless you have manually opened the app.", comment: "")
+        case .enableDisabled:
+            return NSLocalizedString("This will enable all disabled plug-ins across all apps and may take a while.", comment: "")
         }
     }
 }

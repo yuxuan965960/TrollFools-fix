@@ -71,6 +71,33 @@
 /* No comment provided by engineer. */
 "Continue Injection" = "Tiếp tục tiêm";
 
+/* No comment provided by engineer. */
+"Version Change Auto Enable" = "Tự bật khi đổi phiên bản";
+
+/* No comment provided by engineer. */
+"Choose whether to automatically enable plug-ins after all apps are updated." = "Chọn có tự động bật tiện ích sau khi tất cả ứng dụng được cập nhật hay không.";
+
+/* No comment provided by engineer. */
+"Turn On All" = "Bật tất cả";
+
+/* No comment provided by engineer. */
+"Turn Off All" = "Tắt tất cả";
+
+/* No comment provided by engineer. */
+"Background Daemon" = "Tiến trình nền";
+
+/* No comment provided by engineer. */
+"The daemon has stopped. TrollFools will not inject automatically in the background unless you have manually opened the app." = "Tiến trình nền đã dừng. TrollFools sẽ không tự động tiêm trong nền trừ khi bạn đã mở ứng dụng theo cách thủ công.";
+
+/* No comment provided by engineer. */
+"Start Daemon" = "Khởi động tiến trình nền";
+
+/* No comment provided by engineer. */
+"Enable All Disabled Plug-Ins" = "Bật tất cả tiện ích bị tắt";
+
+/* No comment provided by engineer. */
+"This will enable all disabled plug-ins across all apps and may take a while." = "Thao tác này sẽ bật tất cả tiện ích bị tắt trong mọi ứng dụng và có thể mất một lúc.";
+
 "Disable All" = "Vô hiệu hóa tất cả";
 
 /* No comment provided by engineer. */
