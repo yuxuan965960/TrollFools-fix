@@ -19,6 +19,7 @@ struct EjectListView: View {
     @State var isDisablingAll = false
     @State var isDeletingAll = false
     @State var isExportingAll = false
+    @State var isContinuingInjection = false
     @State var isErrorOccurred = false
     @State var lastError: Error?
 
@@ -36,7 +37,7 @@ struct EjectListView: View {
     }
 
     var shouldDisableActions: Bool {
-        isEnablingAll || isDisablingAll || isDeletingAll
+        isEnablingAll || isDisablingAll || isDeletingAll || isContinuingInjection
     }
 
     init(_ app: App) {
@@ -172,6 +173,14 @@ struct EjectListView: View {
                     disableAllButton
                         .disabled(shouldDisableActions || !ejectList.isOkToDisableAll)
                         .foregroundColor(shouldDisableActions ? .secondary : .accentColor)
+
+                    continueInjectionButton
+                        .disabled(shouldDisableActions || !ejectList.isOkToDisableAll)
+                        .foregroundColor(shouldDisableActions ? .secondary : .accentColor)
+
+                    launchAppButton
+                        .disabled(shouldDisableActions)
+                        .foregroundColor(shouldDisableActions ? .secondary : .accentColor)
                 }
             }
 
@@ -277,6 +286,40 @@ struct EjectListView: View {
                 ProgressView()
                     .progressViewStyle(CircularProgressViewStyle())
                     .transition(.opacity)
+            }
+        }
+    }
+
+    var continueInjectionButton: some View {
+        Button {
+            continueInjection()
+        } label: {
+            continueInjectionButtonLabel
+        }
+    }
+
+    var continueInjectionButtonLabel: some View {
+        HStack {
+            Label(NSLocalizedString("Continue Injection", comment: ""), systemImage: "arrow.triangle.2.circlepath")
+
+            Spacer()
+
+            if isContinuingInjection {
+                ProgressView()
+                    .progressViewStyle(CircularProgressViewStyle())
+                    .transition(.opacity)
+            }
+        }
+    }
+
+    var launchAppButton: some View {
+        Button {
+            launchApp()
+        } label: {
+            HStack {
+                Label(NSLocalizedString("Launch", comment: ""), systemImage: "play.circle")
+
+                Spacer()
             }
         }
     }
@@ -629,6 +672,98 @@ struct EjectListView: View {
             lastError = error
             isErrorOccurred = true
         }
+    }
+
+    /// Re-injects every enabled plug-in from a staged copy.
+    ///
+    /// The existing load commands are detached first so they are not duplicated,
+    /// then the asset is injected again. This is what you want after the target
+    /// app has been updated / re-installed and the injection got wiped.
+    private func continueInjection() {
+        let enabledPlugIns = ejectList.injectedPlugIns.filter { $0.isEnabled }
+
+        guard !enabledPlugIns.isEmpty else {
+            return
+        }
+
+        let view = viewControllerHost.viewController?
+            .navigationController?.view
+
+        view?.isUserInteractionEnabled = false
+
+        isEnablingAll = false
+        isDisablingAll = false
+        isDeletingAll = false
+        isContinuingInjection = true
+
+        var failedError: Error?
+
+        DispatchQueue.global(qos: .userInitiated).async {
+            let stagingDir = InjectorV3.temporaryRoot
+                .appendingPathComponent("Continue_\(UUID().uuidString)", isDirectory: true)
+
+            defer {
+                try? FileManager.default.removeItem(at: stagingDir)
+
+                DispatchQueue.main.async {
+                    ejectList.app.reload()
+                    ejectList.reload()
+
+                    isContinuingInjection = false
+
+                    view?.isUserInteractionEnabled = true
+
+                    if let failedError {
+                        DDLogError("\(failedError)", ddlog: InjectorV3.main.logger)
+
+                        var userInfo: [String: Any] = [
+                            NSLocalizedDescriptionKey: failedError.localizedDescription,
+                        ]
+
+                        if let url = (failedError as NSError).userInfo[NSURLErrorKey] as? URL {
+                            userInfo[NSURLErrorKey] = url
+                        }
+
+                        lastError = NSError(domain: Constants.gErrorDomain, code: 0, userInfo: userInfo)
+                        isErrorOccurred = true
+                    }
+                }
+            }
+
+            do {
+                try FileManager.default.createDirectory(at: stagingDir, withIntermediateDirectories: true)
+
+                for plugIn in enabledPlugIns {
+                    do {
+                        let stagedURL = stagingDir.appendingPathComponent(plugIn.url.lastPathComponent)
+                        try FileManager.default.copyItem(at: plugIn.url, to: stagedURL)
+
+                        let injector = try self.makeInjector(pinnedTarget: plugIn.injectionTarget)
+
+                        // Detach the previous entry first, otherwise the load
+                        // command would be inserted a second time.
+                        try? injector.eject([plugIn.url], shouldDesist: false)
+
+                        try injector.inject([stagedURL], shouldPersist: false)
+
+                        try? FileManager.default.removeItem(at: stagedURL)
+                    } catch {
+                        if failedError == nil {
+                            failedError = error
+                        }
+                    }
+                }
+            } catch {
+                if failedError == nil {
+                    failedError = error
+                }
+            }
+        }
+    }
+
+    /// Launches the target app so the freshly injected plug-ins can be verified.
+    private func launchApp() {
+        _ = LSApplicationWorkspace.default().openApplication(withBundleID: ejectList.app.bid)
     }
 
     private func disableAll() {
