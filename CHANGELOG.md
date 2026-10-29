@@ -1,4 +1,22 @@
 # Changelog
+## 4.4.2 Build 266 (2026-10-29)
+### 新增
+- 完整接入「继续注入」：`InjectorV3.injectContinuing(_:shouldPersist:)` 改为逐插件事务式注入，单个插件失败只回滚它自己，其余插件继续。
+- 注入结果页列出失败插件清单（`InjectOutcome.failureDetails`），并提供「继续注入」按钮只重试失败部分。
+- 新增 `AppSymbol` 图标集中管理（`Constants.swift`）：启动图标 `arrow.triangle.2.circlepath.circle`、继续注入图标 `arrow.triangle.2.circlepath`。
+### 修复
+- `FailureView` 的重试按钮样式加 iOS 15 可用性判断（iOS 14 回退 `BorderlessButtonStyle`），修复 `'borderedProminent' is only available in iOS 15.0 or newer` 归档失败。
+- 注入目标选择：插件固定到「主程序」时回落到 259 风格的自动选择逻辑，不再强制返回 App 主二进制。
+------
+## 4.4.2 Build 266 (2026-10-29) [EN]
+### Added
+- Full "Continue Injection": `InjectorV3.injectContinuing(_:shouldPersist:)` injects plug-ins one by one transactionally, so a single failure only rolls back itself while the rest continue.
+- The injection result screen lists the failed plug-ins (`InjectOutcome.failureDetails`) and offers a "Continue Injection" button that retries only the failed ones.
+- Added centralized `AppSymbol` SF Symbol definitions (`Constants.swift`): launch `arrow.triangle.2.circlepath.circle`, continue-injection `arrow.triangle.2.circlepath`.
+### Fixed
+- `FailureView`'s retry button style is now guarded by an iOS 15 availability check (falls back to `BorderlessButtonStyle` on iOS 14), fixing the archive failure `'borderedProminent' is only available in iOS 15.0 or newer`.
+- Injection target selection: when a plug-in is pinned to the main executable, fall back to the legacy (259-style) automatic selection instead of force-returning the app binary.
+------
 ## 4.4.2 Build 265 (2026-10-29)
 ### 新增
 - 注入失败页支持多行失败清单（`details`）与重试按钮（`retryTitle` / `onRetry`），可在结果页直接执行「继续注入」，只重试失败的插件。

@@ -123,7 +123,7 @@ struct AppListCell: View {
         Button {
             launch()
         } label: {
-            Label(NSLocalizedString("Launch", comment: ""), systemImage: "command")
+            Label(NSLocalizedString("Launch", comment: ""), systemImage: AppSymbol.launch)
         }
 
         if AppListModel.hasTrollStore && app.isAllowedToAttachOrDetach {

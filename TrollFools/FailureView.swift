@@ -54,7 +54,7 @@ struct FailureView: View {
 
             if let retryTitle, let onRetry {
                 Button(action: onRetry) {
-                    Label(retryTitle, systemImage: "arrow.clockwise")
+                    Label(retryTitle, systemImage: AppSymbol.continueInject)
                         .font(.headline)
                 }
                 .prominentButtonStyleCompat()
@@ -80,7 +80,7 @@ struct FailureView: View {
 }
 
 extension View {
-    /// `.borderedProminent` 为 iOS 15+ API；iOS 14 回退到边框样式。
+    /// `.borderedProminent` 为 iOS 15+ API；iOS 14 回退 `BorderlessButtonStyle`。
     @ViewBuilder
     func prominentButtonStyleCompat() -> some View {
         if #available(iOS 15.0, *) {

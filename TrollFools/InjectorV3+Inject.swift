@@ -96,7 +96,7 @@ extension InjectorV3 {
 
     // MARK: - Core Trust
 
-    fileprivate func applyCoreTrustBypass(_ target: URL) throws {
+    func applyCoreTrustBypass(_ target: URL) throws {
         let isFramework = checkIsBundle(target)
 
         let machO: URL
@@ -114,7 +114,7 @@ extension InjectorV3 {
 
     fileprivate static let substrateZipURL = findResource(substrateFwkName, fileExtension: "zip")
 
-    fileprivate func prepareSubstrate() throws -> URL {
+    func prepareSubstrate() throws -> URL {
         try FileManager.default.unzipItem(at: Self.substrateZipURL, to: temporaryDirectoryURL)
 
         let fwkURL = temporaryDirectoryURL.appendingPathComponent(Self.substrateFwkName)
@@ -128,7 +128,7 @@ extension InjectorV3 {
         return fwkURL
     }
 
-    fileprivate func standardizeLoadCommandDylibToSubstrate(_ assetURL: URL) throws {
+    func standardizeLoadCommandDylibToSubstrate(_ assetURL: URL) throws {
         let machO: URL
         if checkIsBundle(assetURL) {
             machO = try locateExecutableInBundle(assetURL)
@@ -163,7 +163,7 @@ extension InjectorV3 {
         return name
     }
 
-    fileprivate func insertLoadCommandOfAsset(_ assetURL: URL, to target: URL) throws {
+    func insertLoadCommandOfAsset(_ assetURL: URL, to target: URL) throws {
         let name = try loadCommandNameOfAsset(assetURL)
 
         try cmdInsertLoadCommandRuntimePath(target, name: runtimePathForInjectionTarget(target))
@@ -205,9 +205,12 @@ extension InjectorV3 {
 
     // MARK: - Path Finder
 
-    fileprivate func locateAvailableMachO() throws -> URL? {
+    func locateAvailableMachO() throws -> URL? {
         // Honor an explicit target chosen in the plug-in list.
-        if let pinned = pinnedInjectionTarget,
+        // Scheme B: when the plug-in is pinned to the main executable, fall
+        // through to the legacy (259-style) automatic selection below instead
+        // of force-returning the app binary.
+        if let pinned = pinnedInjectionTarget, pinned != .mainExecutable,
            let pinnedURL = try locateMachO(for: pinned) {
             if (try? isProtectedMachO(pinnedURL)) == false {
                 DDLogInfo("Pinned injection target: \(pinnedURL.path)", ddlog: logger)

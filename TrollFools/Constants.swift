@@ -42,3 +42,15 @@ enum Constants {
     static let trollStoreIdentifier = "com.opa334.TrollStore"
     static let trollStoreInstallURLScheme = "apple-magnifier://install?url="
 }
+
+/// UI 图标（SF Symbols）集中管理，改图标只需要改这里。
+enum AppSymbol {
+    /// 「启动」功能图标（AppListCell 的启动菜单项）。
+    ///
+    /// 与 Build 249 的出包一致：`arrow.triangle.2.circlepath.circle`
+    /// （高亮 / 按下状态可用 `.fill` 版本：`arrow.triangle.2.circlepath.circle.fill`）。
+    static let launch = "arrow.triangle.2.circlepath.circle"
+
+    /// 「继续注入」图标（注入结果页的重试按钮）。
+    static let continueInject = "arrow.triangle.2.circlepath"
+}

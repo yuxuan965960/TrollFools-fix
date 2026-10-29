@@ -70,6 +70,8 @@
 		61EFA3792D3108BD00159442 /* InjectorV3+Eject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61EFA3782D3108B700159442 /* InjectorV3+Eject.swift */; };
 		61EFA37B2D31165700159442 /* InjectorV3+Backup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61EFA37A2D31165000159442 /* InjectorV3+Backup.swift */; };
 		61EFA37D2D311DA800159442 /* InjectorV3+Inject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61EFA37C2D311DA300159442 /* InjectorV3+Inject.swift */; };
+		0A1B2C3D4E5F60718293E002 /* InjectorV3+Continue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A1B2C3D4E5F60718293E001 /* InjectorV3+Continue.swift */; };
+		0A1B2C3D4E5F60718293E003 /* InjectorV3+Continue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A1B2C3D4E5F60718293E001 /* InjectorV3+Continue.swift */; };
 		61F595622D6B42340034DD83 /* SwiftUIIntrospect-Static in Frameworks */ = {isa = PBXBuildFile; productRef = 61F595612D6B42340034DD83 /* SwiftUIIntrospect-Static */; };
 		A1B2C3D72F12345000112233 /* libzstd in Frameworks */ = {isa = PBXBuildFile; productRef = A1B2C3D52F12345000112233 /* libzstd */; };
 		A1B2C3D82F12345000112233 /* libzstd in Frameworks */ = {isa = PBXBuildFile; productRef = A1B2C3D62F12345000112233 /* libzstd */; };
@@ -189,6 +191,7 @@
 		61EFA3782D3108B700159442 /* InjectorV3+Eject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "InjectorV3+Eject.swift"; sourceTree = "<group>"; };
 		61EFA37A2D31165000159442 /* InjectorV3+Backup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "InjectorV3+Backup.swift"; sourceTree = "<group>"; };
 		61EFA37C2D311DA300159442 /* InjectorV3+Inject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "InjectorV3+Inject.swift"; sourceTree = "<group>"; };
+		0A1B2C3D4E5F60718293E001 /* InjectorV3+Continue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "InjectorV3+Continue.swift"; sourceTree = "<group>"; };
 		CC0E80FA2C54F84000B137B4 /* mv-15 */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; path = "mv-15"; sourceTree = "<group>"; };
 		CC1548CF2C4A6B8200A4173E /* ct_bypass */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; path = ct_bypass; sourceTree = "<group>"; };
 		CC1548D22C4A743200A4173E /* SuccessView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuccessView.swift; sourceTree = "<group>"; };
@@ -351,6 +354,7 @@
 				61EFA3782D3108B700159442 /* InjectorV3+Eject.swift */,
 				61EFA3702D3033B700159442 /* InjectorV3+Error.swift */,
 				61EFA37C2D311DA300159442 /* InjectorV3+Inject.swift */,
+				0A1B2C3D4E5F60718293E001 /* InjectorV3+Continue.swift */,
 				61EFA3722D30347600159442 /* InjectorV3+MachO.swift */,
 				61EFA3762D30401A00159442 /* InjectorV3+Metadata.swift */,
 				CCD3FCB72E70948A00AEF7F0 /* InjectorV3+Persistent.swift */,
@@ -652,6 +656,7 @@
 				614C0C572D7C2E98007E9184 /* InjectorV3+Eject.swift in Sources */,
 				CC8A36792D7EC0B500BE90D3 /* CmdEject.swift in Sources */,
 				614C0C582D7C2E98007E9184 /* InjectorV3+Inject.swift in Sources */,
+				0A1B2C3D4E5F60718293E003 /* InjectorV3+Continue.swift in Sources */,
 				0A1B2C3D4E5F60718293C001 /* InjectionTarget.swift in Sources */,
 				614C0C592D7C2E98007E9184 /* AuxiliaryExecute+Spawn.swift in Sources */,
 				CCD3FCB82E70949700AEF7F0 /* InjectorV3+Persistent.swift in Sources */,
@@ -674,6 +679,7 @@
 			files = (
 				6124A0782CD232D400C52253 /* OptionCell.swift in Sources */,
 				61EFA37D2D311DA800159442 /* InjectorV3+Inject.swift in Sources */,
+				0A1B2C3D4E5F60718293E002 /* InjectorV3+Continue.swift in Sources */,
 				CCF5A0A62C4D45400097D48D /* AuxiliaryExecute+Spawn.swift in Sources */,
 				CCB6A11B2C4A6066000D75B0 /* InjectView.swift in Sources */,
 				CCF470732C4A4E81008D8197 /* TrollFoolsStub.m in Sources */,
