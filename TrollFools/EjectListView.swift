@@ -674,15 +674,15 @@ struct EjectListView: View {
         }
     }
 
-    /// Re-injects every enabled plug-in from a staged copy.
+    /// Re-injects the plug-ins that are currently disabled.
     ///
-    /// The existing load commands are detached first so they are not duplicated,
-    /// then the asset is injected again. This is what you want after the target
-    /// app has been updated / re-installed and the injection got wiped.
+    /// This is exactly the same code path as toggling a single plug-in on
+    /// (the “inject” branch of `togglePlugIn`), just applied to every
+    /// disabled plug-in of this app.
     private func continueInjection() {
-        let enabledPlugIns = ejectList.injectedPlugIns.filter { $0.isEnabled }
+        let pendingPlugIns = ejectList.injectedPlugIns.filter { !$0.isEnabled }
 
-        guard !enabledPlugIns.isEmpty else {
+        guard !pendingPlugIns.isEmpty else {
             return
         }
 
@@ -699,63 +699,38 @@ struct EjectListView: View {
         var failedError: Error?
 
         DispatchQueue.global(qos: .userInitiated).async {
-            let stagingDir = InjectorV3.temporaryRoot
-                .appendingPathComponent("Continue_\(UUID().uuidString)", isDirectory: true)
-
-            defer {
-                try? FileManager.default.removeItem(at: stagingDir)
-
-                DispatchQueue.main.async {
-                    ejectList.app.reload()
-                    ejectList.reload()
-
-                    isContinuingInjection = false
-
-                    view?.isUserInteractionEnabled = true
-
-                    if let failedError {
-                        DDLogError("\(failedError)", ddlog: InjectorV3.main.logger)
-
-                        var userInfo: [String: Any] = [
-                            NSLocalizedDescriptionKey: failedError.localizedDescription,
-                        ]
-
-                        if let url = (failedError as NSError).userInfo[NSURLErrorKey] as? URL {
-                            userInfo[NSURLErrorKey] = url
-                        }
-
-                        lastError = NSError(domain: Constants.gErrorDomain, code: 0, userInfo: userInfo)
-                        isErrorOccurred = true
+            for plugIn in pendingPlugIns {
+                do {
+                    let injector = try self.makeInjector(pinnedTarget: plugIn.injectionTarget)
+                    try injector.inject([plugIn.url], shouldPersist: false)
+                } catch {
+                    if failedError == nil {
+                        failedError = error
                     }
                 }
             }
 
-            do {
-                try FileManager.default.createDirectory(at: stagingDir, withIntermediateDirectories: true)
+            DispatchQueue.main.async {
+                ejectList.app.reload()
+                ejectList.reload()
 
-                for plugIn in enabledPlugIns {
-                    do {
-                        let stagedURL = stagingDir.appendingPathComponent(plugIn.url.lastPathComponent)
-                        try FileManager.default.copyItem(at: plugIn.url, to: stagedURL)
+                isContinuingInjection = false
 
-                        let injector = try self.makeInjector(pinnedTarget: plugIn.injectionTarget)
+                view?.isUserInteractionEnabled = true
 
-                        // Detach the previous entry first, otherwise the load
-                        // command would be inserted a second time.
-                        try? injector.eject([plugIn.url], shouldDesist: false)
+                if let failedError {
+                    DDLogError("\(failedError)", ddlog: InjectorV3.main.logger)
 
-                        try injector.inject([stagedURL], shouldPersist: false)
+                    var userInfo: [String: Any] = [
+                        NSLocalizedDescriptionKey: failedError.localizedDescription,
+                    ]
 
-                        try? FileManager.default.removeItem(at: stagedURL)
-                    } catch {
-                        if failedError == nil {
-                            failedError = error
-                        }
+                    if let url = (failedError as NSError).userInfo[NSURLErrorKey] as? URL {
+                        userInfo[NSURLErrorKey] = url
                     }
-                }
-            } catch {
-                if failedError == nil {
-                    failedError = error
+
+                    lastError = NSError(domain: Constants.gErrorDomain, code: 0, userInfo: userInfo)
+                    isErrorOccurred = true
                 }
             }
         }

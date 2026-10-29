@@ -6,6 +6,7 @@
 //
 
 import notify
+import CocoaLumberjackSwift
 import Combine
 import OrderedCollections
 import SwiftUI

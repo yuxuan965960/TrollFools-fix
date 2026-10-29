@@ -533,6 +533,19 @@ private struct AppListQuickSwitches: View {
     @State private var isAlertPresented = false
 
     var body: some View {
+        if #available(iOS 15, *) {
+            switches
+                .alert(alertTitle, isPresented: $isAlertPresented) {
+                    alertActions
+                } message: {
+                    Text(alertMessage)
+                }
+        } else {
+            switches
+        }
+    }
+
+    private var switches: some View {
         HStack(spacing: 16) {
             Button {
                 presentedAlert = .autoEnable
@@ -562,29 +575,30 @@ private struct AppListQuickSwitches: View {
             .disabled(appList.isEnablingAllDisabledPlugIns)
             .accessibilityLabel(NSLocalizedString("Enable All Disabled Plug-Ins", comment: ""))
         }
-        .alert(alertTitle, isPresented: $isAlertPresented) {
-            switch presentedAlert {
-            case .autoEnable:
-                Button(NSLocalizedString("Turn On All", comment: "")) {
-                    autoEnableOnVersionChange = true
-                }
-                Button(NSLocalizedString("Turn Off All", comment: ""), role: .destructive) {
-                    autoEnableOnVersionChange = false
-                }
-                Button(NSLocalizedString("Cancel", comment: ""), role: .cancel) {}
-            case .daemon:
-                Button(NSLocalizedString("Cancel", comment: ""), role: .cancel) {}
-                Button(NSLocalizedString("Start Daemon", comment: "")) {
-                    daemonRunning = true
-                }
-            case .enableDisabled:
-                Button(NSLocalizedString("Cancel", comment: ""), role: .cancel) {}
-                Button(NSLocalizedString("Confirm", comment: ""), role: .destructive) {
-                    appList.enableAllDisabledPlugIns()
-                }
+    }
+
+    @available(iOS 15.0, *)
+    @ViewBuilder
+    private var alertActions: some View {
+        switch presentedAlert {
+        case .autoEnable:
+            Button(NSLocalizedString("Turn On All", comment: "")) {
+                autoEnableOnVersionChange = true
             }
-        } message: {
-            Text(alertMessage)
+            Button(NSLocalizedString("Turn Off All", comment: ""), role: .destructive) {
+                autoEnableOnVersionChange = false
+            }
+            Button(NSLocalizedString("Cancel", comment: ""), role: .cancel) {}
+        case .daemon:
+            Button(NSLocalizedString("Cancel", comment: ""), role: .cancel) {}
+            Button(NSLocalizedString("Start Daemon", comment: "")) {
+                daemonRunning = true
+            }
+        case .enableDisabled:
+            Button(NSLocalizedString("Cancel", comment: ""), role: .cancel) {}
+            Button(NSLocalizedString("Confirm", comment: ""), role: .destructive) {
+                appList.enableAllDisabledPlugIns()
+            }
         }
     }
 
