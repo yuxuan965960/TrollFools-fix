@@ -1,5 +1,18 @@
 # Changelog
-
+## 4.4.2 Build 265 (2026-10-29)
+### 新增
+- 注入失败页支持多行失败清单（`details`）与重试按钮（`retryTitle` / `onRetry`），可在结果页直接执行「继续注入」，只重试失败的插件。
+### 修复
+- `FailureView` 的重试按钮样式改用 iOS 15 可用性判断（iOS 14 回退 `BorderlessButtonStyle`），修复归档失败：`'borderedProminent' is only available in iOS 15.0 or newer`。
+- `AppListCell` 的 Launch 菜单图标恢复为字面量 `command`，移除对未定义 `AppSymbol` 类型的引用。
+------
+## 4.4.2 Build 265 (2026-10-29) [EN]
+### Added
+- The inject failure screen now supports a multi-line failure list (`details`) plus a retry button (`retryTitle` / `onRetry`), letting you run "Continue Injection" right on the result screen and retry only the failed plug-ins.
+### Fixed
+- `FailureView`'s retry button style is now guarded by an iOS 15 availability check (falls back to `BorderlessButtonStyle` on iOS 14), fixing the archive failure: `'borderedProminent' is only available in iOS 15.0 or newer`.
+- `AppListCell`'s Launch menu icon is back to the literal `command`, removing the reference to the undefined `AppSymbol` type.
+------
 ## 4.4.2 Build 263 (2026-10-24)
 
 ### 修复

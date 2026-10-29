@@ -12,6 +12,15 @@ struct FailureView: View {
     let title: String
     let error: Error?
 
+    /// 额外的多行说明，例如失败的插件清单。
+    var details: String? = nil
+
+    /// 重试按钮的标题；为 nil 时不显示重试按钮。
+    var retryTitle: String? = nil
+
+    /// 重试回调（「继续注入」）。
+    var onRetry: (() -> Void)? = nil
+
     var logFileURL: URL? {
         (error as? NSError)?.userInfo[NSURLErrorKey] as? URL
     }
@@ -33,6 +42,24 @@ struct FailureView: View {
                     .font(.title3)
             }
 
+            if let details, !details.isEmpty {
+                ScrollView {
+                    Text(details)
+                        .font(.footnote)
+                        .foregroundColor(.secondary)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                }
+                .frame(maxHeight: 160)
+            }
+
+            if let retryTitle, let onRetry {
+                Button(action: onRetry) {
+                    Label(retryTitle, systemImage: "arrow.clockwise")
+                        .font(.headline)
+                }
+                .prominentButtonStyleCompat()
+            }
+
             if logFileURL != nil {
                 Button {
                     isLogsPresented = true
@@ -48,6 +75,18 @@ struct FailureView: View {
             if let logFileURL {
                 LogsView(url: logFileURL)
             }
+        }
+    }
+}
+
+extension View {
+    /// `.borderedProminent` 为 iOS 15+ API；iOS 14 回退到边框样式。
+    @ViewBuilder
+    func prominentButtonStyleCompat() -> some View {
+        if #available(iOS 15.0, *) {
+            buttonStyle(.borderedProminent)
+        } else {
+            buttonStyle(BorderlessButtonStyle())
         }
     }
 }
