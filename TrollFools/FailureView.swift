@@ -52,14 +52,7 @@ struct FailureView: View {
                 .frame(maxHeight: 160)
             }
 
-            if let retryTitle, let onRetry {
-                Button(action: onRetry) {
-                    Label(retryTitle, systemImage: AppSymbol.continueInject)
-                        .font(.headline)
-                }
-                .prominentButtonStyleCompat()
-            }
-
+            // 失败页只保留「查看日志」按钮；「继续注入」仍由注入流程 / 列表页入口提供，不在此展示。
             if logFileURL != nil {
                 Button {
                     isLogsPresented = true
