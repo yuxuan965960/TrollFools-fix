@@ -116,6 +116,10 @@ struct AppListCell: View {
             }
         }
         .background(cellBackground)
+        .onAppear {
+            // 图标在后台装载，避免主线程同步调用 IconServices（iOS 15 scene-update 看门狗）。
+            app.loadIconIfNeeded()
+        }
     }
 
     @ViewBuilder

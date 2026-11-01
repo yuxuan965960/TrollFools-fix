@@ -1,4 +1,18 @@
 # Changelog
+## 4.4.2 Build 268 (2026-11-01)
+### 修复
+- 修复 iOS 15 上前台卡死被系统杀进程（`0x8badf00d`，`WatchdogEvent: scene-update`，"exhausted real (wall clock) time allowance of 10.00 seconds"）：崩溃快照显示主线程独占 38.7s 用户态 CPU（进程总计 39.2s），其余线程 CPU≈0，主线程栈全部落在系统库（SwiftUI / UIKit / IconServices）。处理方式：
+  - App 图标不再用 `lazy` 在主线程同步调用 `UIImage._applicationIconImage(forBundleIdentifier:format:scale:)`；新增 `AppIconLoader`（后台串行队列 + `NSCache` 缓存），cell 出现时通过 `onAppear` 触发异步装载，加载完成回主线程回填。主线程不再触碰 IconServices 解码。
+  - 日志页改为两段式：先立即呈现带 loading 的占位页，再由后台队列执行 `LogTail.prepare`（日志超过 512 KB 时只保留尾部）并构建日志视图，最后主线程替换内容，避免主线程被大日志的读取 / 去重 / 正则处理打满。
+- 保留 267 的 `LogsPresenter`（UIKit 直接 present）方案，不回退。
+------
+## 4.4.2 Build 268 (2026-11-01) [EN]
+### Fixed
+- Fixed a foreground hang that got the app killed by the system on iOS 15 (`0x8badf00d`, `WatchdogEvent: scene-update`, "exhausted real (wall clock) time allowance of 10.00 seconds"). The stack snapshot shows the main thread burning 38.7s of user CPU (39.2s for the whole process) while every other thread was idle, and all main-thread frames resolve into system libraries (SwiftUI / UIKit / IconServices). Changes:
+  - App icons are no longer loaded via a `lazy` property that calls `UIImage._applicationIconImage(forBundleIdentifier:format:scale:)` synchronously on the main thread. A new `AppIconLoader` (background serial queue + `NSCache`) loads them when a cell appears and fills them back on the main thread, so the main thread never performs IconServices decoding.
+  - The log viewer is now two-phase: a loading placeholder is presented immediately, then a background queue runs `LogTail.prepare` (keeps only the last 512 KB of oversized logs) and builds the log view, and only then the content is swapped in on the main thread. Large log parsing/duplicate removal/regex work no longer saturates the main thread.
+- The 267 `LogsPresenter` (direct UIKit presentation) approach is kept, not reverted.
+------
 ## 4.4.2 Build 267 (2026-10-29)
 ### 修复
 - 修复 iOS 15 上注入完成后偶发崩溃（`SIGABRT` / `abort() called`）：崩溃栈位于 SwiftUI 的 `SheetBridge.dismissAndPresentAgain` → `presentViewController:`，UIKit 抛 `NSInternalInconsistencyException` 未被捕获。规避方式：
