@@ -25,8 +25,6 @@ struct FailureView: View {
         (error as? NSError)?.userInfo[NSURLErrorKey] as? URL
     }
 
-    @State private var isLogsPresented = false
-
     var body: some View {
         VStack(spacing: 20) {
             Image(systemName: "xmark.circle.fill")
@@ -53,9 +51,10 @@ struct FailureView: View {
             }
 
             // 失败页只保留「查看日志」按钮；「继续注入」仍由注入流程 / 列表页入口提供，不在此展示。
-            if logFileURL != nil {
+            if let logFileURL {
                 Button {
-                    isLogsPresented = true
+                    // 直接用 UIKit present，绕开 SwiftUI 的 sheet 桥（iOS 15 上会在转场中崩溃）。
+                    LogsPresenter.present(url: logFileURL)
                 } label: {
                     Label(NSLocalizedString("View Logs", comment: ""),
                           systemImage: "note.text")
@@ -64,11 +63,6 @@ struct FailureView: View {
         }
         .padding()
         .multilineTextAlignment(.center)
-        .sheet(isPresented: $isLogsPresented) {
-            if let logFileURL {
-                LogsView(url: logFileURL)
-            }
-        }
     }
 }
 

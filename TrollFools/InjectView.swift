@@ -120,7 +120,8 @@ struct InjectView: View {
             }
         }
         .padding()
-        .animation(.easeOut, value: isInjecting)
+        // 不要在 isInjecting 变化时做动画：转场期间重建视图树会触发
+        // SwiftUI sheet 桥的 dismiss-then-present 竞态（iOS 15 上 SIGABRT）。
         .navigationTitle(app.name)
         .navigationBarTitleDisplayMode(.inline)
         .onViewWillAppear { viewController in

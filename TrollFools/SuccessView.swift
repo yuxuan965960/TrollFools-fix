@@ -13,8 +13,6 @@ struct SuccessView: View {
     let subtitle: String?
     let logFileURL: URL?
 
-    @State private var isLogsPresented = false
-
     var body: some View {
         VStack(spacing: 20) {
             Image(systemName: "checkmark.circle.fill")
@@ -30,9 +28,10 @@ struct SuccessView: View {
                     .font(.title3)
             }
 
-            if logFileURL != nil {
+            if let logFileURL {
                 Button {
-                    isLogsPresented = true
+                    // 直接用 UIKit present，绕开 SwiftUI 的 sheet 桥（iOS 15 上会在转场中崩溃）。
+                    LogsPresenter.present(url: logFileURL)
                 } label: {
                     Label(NSLocalizedString("View Logs", comment: ""),
                           systemImage: "note.text")
@@ -41,11 +40,6 @@ struct SuccessView: View {
         }
         .padding()
         .multilineTextAlignment(.center)
-        .sheet(isPresented: $isLogsPresented) {
-            if let logFileURL {
-                LogsView(url: logFileURL)
-            }
-        }
     }
 }
 

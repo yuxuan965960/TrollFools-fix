@@ -1,4 +1,16 @@
 # Changelog
+## 4.4.2 Build 267 (2026-10-29)
+### 修复
+- 修复 iOS 15 上注入完成后偶发崩溃（`SIGABRT` / `abort() called`）：崩溃栈位于 SwiftUI 的 `SheetBridge.dismissAndPresentAgain` → `presentViewController:`，UIKit 抛 `NSInternalInconsistencyException` 未被捕获。规避方式：
+  - 失败页 / 成功页的日志页不再使用 SwiftUI `.sheet`，改为新增的 `LogsPresenter` 直接用 UIKit present（彻底绕开 SwiftUI sheet 桥）。
+  - 移除注入页 `.animation(.easeOut, value: isInjecting)`，避免注入状态切换时在转场过程中重建视图树。
+------
+## 4.4.2 Build 267 (2026-10-29) [EN]
+### Fixed
+- Fixed an occasional crash right after injection completes on iOS 15 (`SIGABRT` / `abort() called`): the stack goes through SwiftUI's `SheetBridge.dismissAndPresentAgain` → `presentViewController:`, where UIKit throws an uncaught `NSInternalInconsistencyException`. Mitigations:
+  - The failure/success screens no longer present the log viewer via SwiftUI `.sheet`; a new `LogsPresenter` presents it directly with UIKit, bypassing the SwiftUI sheet bridge entirely.
+  - Removed `.animation(.easeOut, value: isInjecting)` from the injection screen so the view tree is not rebuilt mid-transition when the injection state flips.
+------
 ## 4.4.2 Build 266 (2026-10-29)
 ### 新增
 - 完整接入「继续注入」：`InjectorV3.injectContinuing(_:shouldPersist:)` 改为逐插件事务式注入，单个插件失败只回滚它自己，其余插件继续。
