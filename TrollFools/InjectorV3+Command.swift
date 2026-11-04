@@ -271,13 +271,38 @@ extension InjectorV3 {
         // Re-signing with `ldid` first always yields a self-consistent
         // signature (`codeLimit` == signature offset), which is exactly the
         // "fake-signed at minimum" input the bypass expects.
-        if let reason = Self.whyCodeSignatureIsUnusable(at: target) {
-            DDLogWarn("Refreshing code signature of \(target.lastPathComponent) before ct_bypass: \(reason)", ddlog: logger)
-            try cmdPseudoSign(target, force: true)
+        if Self.isExecutableMachO(at: target) {
+            // The host app binary: never touch its signature unless it is
+            // demonstrably broken (entitlements must survive).
+            if let reason = Self.whyCodeSignatureIsUnusable(at: target) {
+                DDLogWarn("Refreshing code signature of \(target.lastPathComponent) before ct_bypass: \(reason)", ddlog: logger)
+                try cmdPseudoSign(target, force: true)
+            } else {
+                try cmdPseudoSign(target)
+            }
         } else {
-            try cmdPseudoSign(target)
+            // Plug-in payloads (dylibs / frameworks) are ours: always hand
+            // `ct_bypass` a freshly ldid-signed file. Shipping signatures can
+            // look self-consistent while still driving ChOma into SIGSEGV.
+            if let reason = Self.whyCodeSignatureIsUnusable(at: target) {
+                DDLogWarn("Refreshing code signature of \(target.lastPathComponent) before ct_bypass: \(reason)", ddlog: logger)
+            }
+            try cmdPseudoSign(target, force: true)
         }
 
+        if let failure = try runCoreTrustBypass(target: target, teamID: teamID) {
+            // Last resort: re-sign from scratch and try exactly once more.
+            DDLogWarn("ct_bypass failed for \(target.lastPathComponent) (\(failure)); re-signing with ldid and retrying once", ddlog: logger)
+            try cmdPseudoSign(target, force: true)
+            if let secondFailure = try runCoreTrustBypass(target: target, teamID: teamID) {
+                throw Error.generic(secondFailure)
+            }
+        }
+    }
+
+    /// Runs `ct_bypass` once. Returns a human readable failure description, or
+    /// `nil` on success.
+    private func runCoreTrustBypass(target: URL, teamID: String) throws -> String? {
         let receipt = try Execute.rootSpawnWithOutputs(binary: Self.ctBypassBinaryURL.path, arguments: [
             "-r", "-i", target.path, "-t", teamID,
         ], ddlog: logger)
@@ -289,15 +314,20 @@ extension InjectorV3 {
 
         switch receipt.terminationReason {
         case let .exit(code):
-            guard code == EXIT_SUCCESS else {
+            if code == EXIT_SUCCESS {
                 if !output.isEmpty {
-                    DDLogError("ct_bypass output for \(target.lastPathComponent): \(output)", ddlog: logger)
+                    DDLogInfo("ct_bypass output for \(target.lastPathComponent): \(output)", ddlog: logger)
                 }
-                throw Error.generic(String(
-                    format: NSLocalizedString("%@ exited with code %d", comment: ""),
-                    "ct_bypass", code
-                ))
+                return nil
             }
+            if !output.isEmpty {
+                DDLogError("ct_bypass output for \(target.lastPathComponent): \(output)", ddlog: logger)
+            }
+            let base = String(
+                format: NSLocalizedString("%@ exited with code %d", comment: ""),
+                "ct_bypass", code
+            )
+            return output.isEmpty ? base : "\(base): \(output)"
         case let .uncaughtSignal(signal):
             if !output.isEmpty {
                 DDLogError("ct_bypass output for \(target.lastPathComponent): \(output)", ddlog: logger)
@@ -306,11 +336,34 @@ extension InjectorV3 {
                 format: NSLocalizedString("%@ terminated with signal %d", comment: ""),
                 "ct_bypass", signal
             )
-            throw Error.generic(output.isEmpty ? base : "\(base): \(output)")
+            return output.isEmpty ? base : "\(base): \(output)"
         }
+    }
 
-        if !output.isEmpty {
-            DDLogInfo("ct_bypass output for \(target.lastPathComponent): \(output)", ddlog: logger)
+    /// `true` when the file is a thin Mach-O executable (`MH_EXECUTE`).
+    /// Fat archives and unreadable headers are treated as "not executable" so
+    /// that their payload gets a fresh signature before `ct_bypass`.
+    private static func isExecutableMachO(at url: URL) -> Bool {
+        guard let handle = try? FileHandle(forReadingFrom: url) else {
+            return false
+        }
+        defer {
+            try? handle.close()
+        }
+        let attributes = try? FileManager.default.attributesOfItem(atPath: url.path)
+        let fileSize = (attributes?[.size] as? NSNumber)?.uint64Value ?? 0
+        guard let header = Self.readData(handle, at: 0, count: 16, fileSize: fileSize) else {
+            return false
+        }
+        switch Self.readU32(header, 0, bigEndian: false) ?? 0 {
+        case 0xFEED_FACF, 0xFEED_FACE:
+            // struct mach_header: magic, cputype, cpusubtype, filetype …
+            guard let fileType = Self.readU32(header, 12, bigEndian: false) else {
+                return false
+            }
+            return fileType == 0x2 // MH_EXECUTE
+        default:
+            return false
         }
     }
 

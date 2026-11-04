@@ -1,4 +1,20 @@
 # Changelog
+## 4.4.2 Build 270 (2026-11-04)
+### 修复
+- `ct_bypass` 对 App Store dylib（如 `alivcffmpeg.dylib`）仍偶发 `Uncaught signal 11`（SIGSEGV）导致注入失败，进一步加固：
+  - 注入载荷（dylib / framework，非 `MH_EXECUTE`）在调用 `ct_bypass` 前**无条件**先用 `ldid -S` 重新假签名，不再依赖「签名看起来是否自洽」的判断 —— 外来签名可以看起来完全自洽，却依然让 ChOma 读越界崩溃。
+  - 宿主 App 主二进制（`MH_EXECUTE`）保持保守策略：仅当签名不自洽时才强制重签，确保 entitlements 不被破坏。
+  - `ct_bypass` 失败（非 0 退出或收到信号）后，自动重新签名并**再重试一次**；两次都失败才抛出错误，并附带 `ct_bypass` 的 stdout/stderr，便于定位。
+  - 新增 `isExecutableMachO(at:)`（读 `mach_header.filetype`）与 `runCoreTrustBypass(target:teamID:)`（单次执行并返回可读失败描述）。
+------
+## 4.4.2 Build 270 (2026-11-04) [EN]
+### Fixed
+- `ct_bypass` still occasionally died with `Uncaught signal 11` (SIGSEGV) on App Store dylibs such as `alivcffmpeg.dylib`. Hardened further:
+  - Plug-in payloads (dylibs / frameworks, i.e. not `MH_EXECUTE`) are now **always** re-signed with `ldid -S` before `ct_bypass`, instead of relying on the "does the signature look self-consistent" check — a foreign signature can look perfectly consistent and still drive ChOma into an out-of-bounds read.
+  - The host app binary (`MH_EXECUTE`) keeps the conservative path: force re-sign only when the signature is demonstrably broken, so entitlements are preserved.
+  - When `ct_bypass` fails (non-zero exit or a signal), the payload is re-signed and `ct_bypass` is retried exactly once; only then is the error thrown, including `ct_bypass`'s stdout/stderr for diagnosis.
+  - Added `isExecutableMachO(at:)` (reads `mach_header.filetype`) and `runCoreTrustBypass(target:teamID:)` (single run returning a readable failure description).
+------
 ## 4.4.2 Build 269 (2026-11-04)
 ### 修复（来自 261-InjectionTarget-SymbolFix 包，已合并进当前代码）
 - `ct_bypass`（ChOma）崩溃 / 失败难以定位的问题：
