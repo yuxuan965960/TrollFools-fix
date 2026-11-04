@@ -1,4 +1,20 @@
 # Changelog
+## 4.4.2 Build 269 (2026-11-04)
+### 修复（来自 261-InjectionTarget-SymbolFix 包，已合并进当前代码）
+- `ct_bypass`（ChOma）崩溃 / 失败难以定位的问题：
+  - 新增 `whyCodeSignatureIsUnusable(at:)`：解析 Mach-O 头 → `LC_CODE_SIGNATURE` → `CS_CodeDirectory`，校验 `codeLimit` 是否越过签名偏移或文件大小（陈旧/外来签名）。签名不自洽时先用 `ldid` 强制重签（`cmdPseudoSign(_:force:)`）再交给 `ct_bypass`，避免它按旧 `codeLimit` 读越界后 SIGSEGV。
+  - `cmdCoreTrustBypass` 改用 `Execute.rootSpawnWithOutputs`，捕获 `ct_bypass` 的 stdout/stderr 并写入日志；`uncaughtSignal` 不再笼统失败，而是报出信号号 + 输出，便于定位。
+- 注入目标（InjectionTarget）：恢复 259 语义 —— 插件显式固定到「主程序」时直接使用该目标（不再回落到自动选择）。
+- 266/267/268 的既有修复全部保留（继续注入、SwiftUI sheet 崩溃规避、图标异步装载、日志页两段式）。
+------
+## 4.4.2 Build 269 (2026-11-04) [EN]
+### Fixed (merged from the 261-InjectionTarget-SymbolFix package into the current tree)
+- `ct_bypass` (ChOma) crashes / opaque failures:
+  - Added `whyCodeSignatureIsUnusable(at:)`, which parses the Mach-O header → `LC_CODE_SIGNATURE` → `CS_CodeDirectory` and verifies that `codeLimit` does not exceed the signature offset or the file size (stale / foreign signature). When the signature is not self-consistent, the payload is re-signed with `ldid` (`cmdPseudoSign(_:force:)`) before `ct_bypass` runs, so it no longer reads past EOF and dies with SIGSEGV.
+  - `cmdCoreTrustBypass` now uses `Execute.rootSpawnWithOutputs`, capturing `ct_bypass`'s stdout/stderr into the log; `uncaughtSignal` reports the signal number plus output instead of a generic failure.
+- Injection target: restored the 259 semantics — when a plug-in is explicitly pinned to the main executable, that target is used as-is (no fallback to automatic selection).
+- All 266/267/268 fixes are preserved (Continue Injection, SwiftUI sheet crash avoidance, async icon loading, two-phase log viewer).
+------
 ## 4.4.2 Build 268 (2026-11-01)
 ### 修复
 - 修复 iOS 15 上前台卡死被系统杀进程（`0x8badf00d`，`WatchdogEvent: scene-update`，"exhausted real (wall clock) time allowance of 10.00 seconds"）：崩溃快照显示主线程独占 38.7s 用户态 CPU（进程总计 39.2s），其余线程 CPU≈0，主线程栈全部落在系统库（SwiftUI / UIKit / IconServices）。处理方式：

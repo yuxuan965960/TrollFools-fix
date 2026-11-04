@@ -206,11 +206,9 @@ extension InjectorV3 {
     // MARK: - Path Finder
 
     func locateAvailableMachO() throws -> URL? {
-        // Honor an explicit target chosen in the plug-in list.
-        // Scheme B: when the plug-in is pinned to the main executable, fall
-        // through to the legacy (259-style) automatic selection below instead
-        // of force-returning the app binary.
-        if let pinned = pinnedInjectionTarget, pinned != .mainExecutable,
+        // Honor an explicit target chosen in the plug-in list (259-style):
+        // a pinned target is used as-is, including `.mainExecutable`.
+        if let pinned = pinnedInjectionTarget,
            let pinnedURL = try locateMachO(for: pinned) {
             if (try? isProtectedMachO(pinnedURL)) == false {
                 DDLogInfo("Pinned injection target: \(pinnedURL.path)", ddlog: logger)
